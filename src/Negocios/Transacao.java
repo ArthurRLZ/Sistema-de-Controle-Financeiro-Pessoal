@@ -1,6 +1,7 @@
 package Negocios;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public abstract class Transacao {
     private String id;
@@ -38,5 +39,14 @@ public abstract class Transacao {
 
     public Categoria getCategoria() { return categoria; }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Transacao outra)) return false;
+        return Objects.equals(id, outra.id);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }
