@@ -19,6 +19,7 @@ public class Categoria {
         return nome;
     }
 
+
     // adicionei esse método pra gente poder mudar o nome da categoria dps
     // tp se o cara errar ou quiser trocar o nome tlgd
     public void setNome(String nome) {
@@ -27,6 +28,10 @@ public class Categoria {
 
     // esse  equals é pra garantir qua gnt não va ter 2 categorias com o mesmo ID
     // ele so compara o ID então se o ID for igual  ele considera que são a mesma categoria
+
+
+	// equals baseado no ID
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
