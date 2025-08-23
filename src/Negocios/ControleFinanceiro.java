@@ -1,19 +1,35 @@
 package Negocios;
 
-import Dados.RepositorioCategoria;
+import Dados.RepositorioCategoria;	
 import Dados.RepositorioTransacao;
+import Dados.RepositorioConta;
 
 import java.util.ArrayList;
+import java.util.UUID;
 import java.time.LocalDate;
 
 public class ControleFinanceiro {
     private RepositorioTransacao repoTransacao;
     private RepositorioCategoria repoCategoria;
+    private RepositorioConta repoConta;
 
     public ControleFinanceiro() {
         this.repoTransacao = new RepositorioTransacao();
         this.repoCategoria = new RepositorioCategoria();
+        this.repoConta = new RepositorioConta();
     }
+    // ===== Conta =====
+    public void adicionarTransferencia(Conta origem, Conta destino, double valor, String descricao) { // transferencia interna entre contas
+        Despesa despesa = new Despesa(UUID.randomUUID().toString(), descricao, valor, LocalDate.now(), origem);
+        Receita receita = new Receita(UUID.randomUUID().toString(), descricao, valor, LocalDate.now(), destino);
+
+        repoTransacao.adicionar(despesa);
+        repoTransacao.adicionar(receita);
+        
+        origem.debitar(valor);
+        destino.creditar(valor);
+    }
+    
     // ===== Transações =====
     public void adicionarTransacao(Transacao t, Categoria c) {
     	t.setCategoria(c);    //associa a categoria a transação

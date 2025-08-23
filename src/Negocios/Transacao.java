@@ -1,7 +1,8 @@
 package Negocios;
 
-import java.time.LocalDate;
+import java.time.LocalDate;	
 import java.util.Objects;
+import Negocios.Conta;
 
 public abstract class Transacao {
     private String id;
@@ -9,12 +10,14 @@ public abstract class Transacao {
     private Double valor;
     private LocalDate data;
     private Categoria categoria;
+    private Conta conta;
 
-    public Transacao(String id, String descricao, Double valor, LocalDate data) {
+    public Transacao(String id, String descricao, Double valor, LocalDate data, Conta conta) {
         this.id = id;
         this.descricao = descricao;
         this.valor = valor;
         this.data = data;
+        this.conta = conta;
     }
     public void setDescricao(String descricao) {
     	this.descricao = descricao;

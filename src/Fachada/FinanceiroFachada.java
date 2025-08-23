@@ -1,12 +1,13 @@
 package Fachada;
 
-import Dados.PersistenciaDados;
+import Dados.PersistenciaDados;	
 import Negocios.Categoria;
 import Negocios.ControleFinanceiro;
 import Negocios.Relatorio;
 import Negocios.Transacao;
 import Negocios.Receita;
 import Negocios.Despesa;
+import Negocios.Conta;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class FinanceiroFachada {
         this.relatorio = new Relatorio();
     }
 //TUDO: falta a persistencia e os relatorios, toda a outra parte das transacoes e categoria ja foram feitas
+    
     // ===== Persistência =====
     public void carregarDados(String tipo) {
         persistencia.carregarDados(tipo, controle);
@@ -32,15 +34,21 @@ public class FinanceiroFachada {
         persistencia.salvarDados(tipo, controle);
     }
 
+    // ===== Conta =====
+    public void adicionarTransferencia(Conta origem, Conta destino, double valor, String descricao) {
+        controle.adicionarTransferencia(origem, destino, valor, descricao);
+    }
+    
+    
     // ===== Transações =====
-     public void adicionarTransacao(String tipo, String descricao, double valor, LocalDate data, Categoria categoria) { //unificacao para adicionar despesas/receita
+    public void adicionarTransacao(String tipo, String descricao, double valor, LocalDate data, Categoria categoria, Conta conta) { // Agora com o argumento Conta
         if ("receita".equalsIgnoreCase(tipo)) {
-            Receita novaReceita = new Receita(UUID.randomUUID().toString(), descricao, valor, data);
+            Receita novaReceita = new Receita(UUID.randomUUID().toString(), descricao, valor, data, conta);
             controle.adicionarTransacao(novaReceita, categoria);
         } else if ("despesa".equalsIgnoreCase(tipo)) {
-            Despesa novaDespesa = new Despesa(UUID.randomUUID().toString(), descricao, valor, data);
+            Despesa novaDespesa = new Despesa(UUID.randomUUID().toString(), descricao, valor, data, conta);
             controle.adicionarTransacao(novaDespesa, categoria);
-        } 
+        }
     }
 
      public void removerTransacao(String id) {
