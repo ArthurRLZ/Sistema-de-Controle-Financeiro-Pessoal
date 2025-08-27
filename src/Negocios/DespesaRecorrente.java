@@ -1,40 +1,48 @@
 package Negocios;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
-public class DespesaRecorrente extends Despesa {
+public class DespesaRecorrente extends Despesa implements Serializable {
 
-  private String frequencia;
-  private int numeroDeParcelas;
-  private LocalDate dataUltimaCobranca;
+    private String frequencia;
+    private int numeroDeParcelas;
+    private LocalDate dataUltimaCobranca;
 
-  public DespesaRecorrente(String id, String descricao, double valor, LocalDate data, Categoria categoria, Conta conta, String frequencia, int numeroDeParcelas){
-    super(id, descricao, valor, data, categoria, conta);
-    this.frequencia=frequencia;
-    this.numeroDeParcelas= numeroDeParcelas;
-    this.dataUltimaCobranca= data;
-  }
-  public String getFrequencia (){
-    return frequencia;
-  }
-  public int getNumeroDeParcelas (){
-    return numeroDeParcelas;
-  }
-  public LocalDate getDataUltimaCobranca (){
-    return dataUltimaCobranca;
-  }
-  public void setFrequencia ( String frequencia){
-    this.frequencia=frequencia;
-  }
-  public void setNumeroDeParcelas (int numeroDeParcelas){
-    this.numeroDeParcelas= numeroDeParcelas;
-  }
-  public void setDataUltimaCobranca (LocalDate dataUltimaCobranca){
-    this.dataUltimaCobranca=dataUltimaCobranca;
-  }
-  //  vai calcular a data da proximaData com base na frequência
+    public DespesaRecorrente(String id, String descricao, double valor, LocalDate data, Categoria categoria, Conta conta, String frequencia, int numeroDeParcelas) {
+        super(id, descricao, valor, data, categoria, conta);
+        this.frequencia = frequencia;
+        this.numeroDeParcelas = numeroDeParcelas;
+        this.dataUltimaCobranca = data;
+    }
+
+    public String getFrequencia() {
+        return frequencia;
+    }
+
+    public int getNumeroDeParcelas() {
+        return numeroDeParcelas;
+    }
+
+    public LocalDate getDataUltimaCobranca() {
+        return dataUltimaCobranca;
+    }
+
+    public void setFrequencia(String frequencia) {
+        this.frequencia = frequencia;
+    }
+
+    public void setNumeroDeParcelas(int numeroDeParcelas) {
+        this.numeroDeParcelas = numeroDeParcelas;
+    }
+
+    public void setDataUltimaCobranca(LocalDate dataUltimaCobranca) {
+        this.dataUltimaCobranca = dataUltimaCobranca;
+    }
+
+    // calcula a data da proxima cobranca com base na frequencia
     public LocalDate calcularProximaData() {
-        LocalDate proximaData = this.ultimaGeracao;
+        LocalDate proximaData = this.dataUltimaCobranca;
         switch (frequencia.toLowerCase()) {
             case "mensal":
                 proximaData = proximaData.plusMonths(1);
