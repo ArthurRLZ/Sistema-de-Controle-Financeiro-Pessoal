@@ -27,7 +27,7 @@ public class Conta implements Serializable {
 
 	@Override
 	public boolean equals(Object o ) {
-		if (this==0) return true;
+		if (this==o) return true;
 		if ( !(o instanceof Conta conta)) return false;
 		return Objects.equals(id, conta.id);
 	}
