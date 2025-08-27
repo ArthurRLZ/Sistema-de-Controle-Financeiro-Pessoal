@@ -22,7 +22,7 @@ public class ControleFinanceiro {
         this.despesasRecorrentes = new ArrayList<>();
     }
 
-    // achar id
+    // pra achar pelo id
     private Categoria buscarCategoriaPorId(String id) {
         for (Categoria c : repoCategoria.getTodos()) {
             if (c.getId().equals(id)) {
@@ -41,7 +41,7 @@ public class ControleFinanceiro {
         return null;
     }
 
-    // gerenciamento de categorias
+    // categorias aq 
     public void adicionarCategoria(String nome) {
         Categoria c = new Categoria(UUID.randomUUID().toString(), nome);
         repoCategoria.adicionar(c);
@@ -60,7 +60,7 @@ public class ControleFinanceiro {
         return false;
     }
     
-    // gerenciamento de contas 
+    // gerencia as contas
     public void adicionarConta(String nome) {
         Conta c = new Conta(UUID.randomUUID().toString(), nome);
         repoConta.adicionar(c);
@@ -79,7 +79,7 @@ public class ControleFinanceiro {
         return false;
     }
     
-    // gerenciamento de transacoes (receita e despesa) 
+    // gerencia as transacoes (receita e despesa) 
     public void adicionarReceita(String descricao, double valor, String categoriaId, String contaId) {
         Categoria categoria = buscarCategoriaPorId(categoriaId);
         Conta conta = buscarContaPorId(contaId);
@@ -117,7 +117,7 @@ public class ControleFinanceiro {
         }
     }
 
-    // o gerenciamento de despesas recorrentes 
+    // gerencia as despesas recorrentes
     public void adicionarDespesaRecorrente(String descricao, double valor, String categoriaId, String contaId, String frequencia, int numeroDeParcelas) {
         Categoria categoria = buscarCategoriaPorId(categoriaId);
         Conta conta = buscarContaPorId(contaId);
@@ -132,7 +132,8 @@ public class ControleFinanceiro {
         ArrayList<DespesaRecorrente> despesasParaRemover = new ArrayList<>();
 
         for (DespesaRecorrente dr : this.despesasRecorrentes) {
-            if (dr.getNumeroDeParcelas() > 0 && hoje.isEqual(dr.calcularProximaData()) || hoje.isAfter(dr.calcularProximaData())) {
+            // checa se ainda tem parcelas e se a data de hoje nao eh antes da proxima geracao
+            if (dr.getNumeroDeParcelas() > 0 && !hoje.isBefore(dr.calcularProximaData())) {
                 
                 // cria uma nova despesa
                 Despesa novaDespesa = new Despesa(
@@ -148,7 +149,7 @@ public class ControleFinanceiro {
                 repoTransacao.adicionar(novaDespesa);
                 
                 // atualiza a despesa recorrente
-                dr.setUltimaGeracao(dr.calcularProximaData());
+                dr.setDataUltimaCobranca(hoje);
                 dr.setNumeroDeParcelas(dr.getNumeroDeParcelas() - 1);
 
                 // se nao houver mais parcelas, marca para remocao
