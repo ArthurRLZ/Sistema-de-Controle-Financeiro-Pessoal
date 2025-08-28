@@ -2,7 +2,7 @@ package Negocios;
 
 import java.util.Objects;
 
-public class Categoria {
+public class Categoria implements Serializable {
     private String id;
     private String nome;
 
