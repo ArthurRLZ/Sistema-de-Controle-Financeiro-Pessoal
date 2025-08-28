@@ -1,6 +1,6 @@
 package Fachada;
 
-import Dados.PersistenciaDados;	
+import Dados.PersistenciaDados;		
 import Negocios.Categoria;
 import Negocios.ControleFinanceiro;
 import Negocios.Relatorio;

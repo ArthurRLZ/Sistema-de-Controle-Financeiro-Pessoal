@@ -18,11 +18,10 @@ public class Relatorio {
         double despesas = 0;
 
         for (Transacao t : transacoes) {
-            double valor = t.getValor();
-            if (valor >= 0) { // se o valor for positivo é receita
-                receitas += valor;
-            } else { // se for negativo é  despesa
-                despesas += Math.abs(valor);
+            if (t instanceof Receita) {
+                receitas += t.getValor();
+            } else if (t instanceof Despesa) {
+                despesas += t.getValor();
             }
         }
 
@@ -41,10 +40,10 @@ public class Relatorio {
         Map<String, Double> gastosPorCategoria = new HashMap<>();
 
         for (Transacao t : transacoes) {
-            // e só as despesas aqui, checa se o valor é negativo
-            if (t.getValor() < 0) {
+            // Agora, verifica se a transação é uma Despesa
+            if (t instanceof Despesa) {
                 String categoria = t.getCategoria().getNome();
-                double valor = Math.abs(t.getValor());
+                double valor = t.getValor();
 
                 gastosPorCategoria.put(categoria,
                         gastosPorCategoria.getOrDefault(categoria, 0.0) + valor);
