@@ -5,6 +5,8 @@ import java.util.Objects;
 import java.io.Serializable;
 
 public abstract class Transacao implements Serializable {
+	private static final long serialVersionUID = 1L;
+	
 	private String id;
 	private String descricao;
 	private Double valor;

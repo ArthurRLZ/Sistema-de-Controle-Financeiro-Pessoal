@@ -82,5 +82,86 @@ public class PersistenciaDados {
 
         return controle;
     }
+        public void salvarCategorias(ArrayList<Categoria> categorias) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("categorias.dat"))) {
+            oos.writeObject(categorias);
+            System.out.println("Categorias salvas com sucesso.");
+        } catch (IOException e) {
+            System.err.println("Erro ao salvar categorias: " + e.getMessage());
+        }
+}
+
+    @SuppressWarnings("unchecked")
+    public ArrayList<Categoria> carregarCategorias() {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("categorias.dat"))) {
+            return (ArrayList<Categoria>) ois.readObject();
+        } catch (FileNotFoundException e) {
+            System.out.println("Nenhuma categoria encontrada, criando lista nova.");
+            return new ArrayList<>();
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Erro ao carregar categorias: " + e.getMessage());
+            return new ArrayList<>();
+        }
+}
+    public void salvarContas(ArrayList<Conta> contas) {
+    try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("contas.dat"))) {
+        oos.writeObject(contas);
+        System.out.println("Contas salvas com sucesso.");
+    } catch (IOException e) {
+        System.err.println("Erro ao salvar contas: " + e.getMessage());
+    }
+}
+
+    @SuppressWarnings("unchecked")
+    public ArrayList<Conta> carregarContas() {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("contas.dat"))) {
+            return (ArrayList<Conta>) ois.readObject();
+        } catch (FileNotFoundException e) {
+            System.out.println("Nenhuma conta encontrada, criando lista nova.");
+            return new ArrayList<>();
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Erro ao carregar contas: " + e.getMessage());
+            return new ArrayList<>();
+        }
+}
+    public void salvarTransacoes(ArrayList<Transacao> transacoes) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("transacoes.dat"))) {
+            oos.writeObject(transacoes);
+            System.out.println("Transações salvas com sucesso.");
+        } catch (IOException e) {
+            System.err.println("Erro ao salvar transações: " + e.getMessage());
+        }
+}
+
+    @SuppressWarnings("unchecked")
+    public ArrayList<Transacao> carregarTransacoes() {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("transacoes.dat"))) {
+            return (ArrayList<Transacao>) ois.readObject();
+        } catch (FileNotFoundException e) {
+            System.out.println("Nenhuma transação encontrada, criando lista nova.");
+            return new ArrayList<>();
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Erro ao carregar transações: " + e.getMessage());
+            return new ArrayList<>();
+        }
+}
+    public void salvarDespesasRecorrentes(ArrayList<DespesaRecorrente> despesas) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("despesasRecorrentes.dat"))) {
+            oos.writeObject(despesas);
+            System.out.println("Despesas recorrentes salvas com sucesso.");
+        } catch (IOException e) {
+            System.err.println("Erro ao salvar despesas recorrentes: " + e.getMessage());
+        }
+}
+
+    @SuppressWarnings("unchecked")
+    public ArrayList<DespesaRecorrente> carregarDespesasRecorrentes() {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("despesasRecorrentes.dat"))) {
+            return (ArrayList<DespesaRecorrente>) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+                System.err.println("Erro ao carregar despesas recorrentes: " + e.getMessage());
+            return new ArrayList<>();
+        }
+}
 }
 

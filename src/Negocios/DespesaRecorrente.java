@@ -4,7 +4,8 @@ import java.io.Serializable;
 import java.time.LocalDate;
 
 public class DespesaRecorrente extends Despesa implements Serializable {
-
+    private static final long serialVersionUID = 1L;
+    
     private String frequencia;
     private int numeroDeParcelas;
     private LocalDate dataUltimaCobranca;
