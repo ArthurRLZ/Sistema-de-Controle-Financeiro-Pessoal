@@ -1,68 +1,83 @@
 package Negocios;
 
-import java.util.Objects;
+import Negocios.exceptions.NegocioException;
+import Negocios.exceptions.SaldoInsuficienteException;
+
 import java.io.Serializable;
+import java.util.Objects;
 
 public class Conta implements Serializable {
-	private static final long serialVersionUID = 1L;
-	
-	private String id;
-	private String nome;
-	private double saldo;
+    private static final long serialVersionUID = 1L;
 
-	public Conta ( String id, String nome, double saldo){
-		this.id=id;
-		this.nome=nome;
-		this.saldo=saldo;
+    private int id;
+    private String nome;
+    private double saldo;
 
-	}
-	
-	public double getSaldo() {
-		return saldo;
-	}
+    // Construtor
+    public Conta(String nome) {
+        this.nome = nome;
+        this.saldo = 0.0;
+    }
 
-	public void setSaldo(double saldo) {
-		this.saldo = saldo;
-	}
+    // Métodos de Operação da Conta
+    public void creditar(double valor) throws NegocioException {
+        if (valor <= 0) {
+            throw new NegocioException("O valor a ser creditado deve ser maior que zero.");
+        }
+        this.saldo += valor;
+    }
 
-	public void creditar(double valor) {
-	    this.saldo += valor;
-	}
-	public void debitar(double valor) {
-	    this.saldo -= valor;
-	}
-	
+    public void debitar(double valor) throws SaldoInsuficienteException, NegocioException {
+        if (valor <= 0) {
+            throw new NegocioException("O valor a ser debitado deve ser maior que zero.");
+        }
+        if (this.saldo < valor) {
+            throw new SaldoInsuficienteException("Saldo insuficiente. Saldo atual: " + this.saldo);
+        }
+        this.saldo -= valor;
+    }
 
-	public String getId(){
-		return id;
-	}
+    // Getters e Setters
+    public int getId() {
+        return id;
+    }
 
-	public String getNome(){
-		return nome;
-	}
+    public void setId(int id) {
+        this.id = id;
+    }
 
-	public void setNome (String nome) {
-		this.nome=nome;
-	}
+    public String getNome() {
+        return nome;
+    }
 
-	  @Override
-	    public boolean equals(Object o) {
-	        if (this == o) return true;
-	        if (!(o instanceof Conta conta)) return false;
-	        return Objects.equals(id, conta.id);
-	    }
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
 
-	    @Override
-	    public int hashCode() {
-	        return Objects.hash(id);
-	    }
+    public double getSaldo() {
+        return saldo;
+    }
 
-	    @Override
-	    public String toString() {
-	        return "Conta{" +
-	                "id='" + id + '\'' +
-	                ", nome='" + nome + '\'' +
-	                ", saldo=" + saldo +
-	                '}';
-	    }
-	}
+    // Métodos Padrão
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Conta conta = (Conta) o;
+        return id == conta.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Conta{" +
+                "id=" + id +
+                ", nome='" + nome + '\'' +
+                ", saldo=" + saldo +
+                '}';
+    }
+}
