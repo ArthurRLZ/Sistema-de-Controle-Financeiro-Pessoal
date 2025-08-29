@@ -1,7 +1,6 @@
 package Negocios;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.time.LocalDate;	
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -61,7 +60,7 @@ public class Relatorio {
     private List<Transacao> filtrarPorPeriodo(List<Transacao> transacoes, LocalDate inicio, LocalDate fim) {
         return transacoes.stream()
             .filter(t -> {
-                LocalDate dataTransacao = t.getData().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                LocalDate dataTransacao = t.getData();
                 return !dataTransacao.isBefore(inicio) && !dataTransacao.isAfter(fim);
             })
             .collect(Collectors.toList());

@@ -1,21 +1,37 @@
 package Fachada;
 
+import Dados.*;
 import Negocios.*;
 import Negocios.exceptions.NegocioException;
 import Negocios.exceptions.SaldoInsuficienteException;
+import java.io.IOException;
 import java.util.List;
+
 
 public class FinanceiroFachada {
 
     private ControleFinanceiro controlador;
 
     public FinanceiroFachada() {
-        this.controlador = new ControleFinanceiro();
+        // Tenta carregar o estado do sistema a partir de um arquivo
+        this.controlador = PersistenciaDados.carregarDadosSerializacao("dados.dat");
+        // Se o arquivo não existir (ou houver um erro), cria um novo controlador
+        // com repositórios vazios
+        if (this.controlador == null) {
+            this.controlador = new ControleFinanceiro(
+                new RepositorioConta(),
+                new RepositorioCategoria(),
+                new RepositorioTransacao(),
+                new RepositorioDespesaRecorrente()
+            );
+        }
     }
+    
 
     // Gerenciamento de Contas
     public void criarConta(String nome) throws NegocioException {
-        controlador.criarConta(nome);
+        Conta novaConta = new Conta(nome);
+        controlador.criarConta(novaConta.getNome());
     }
 
     public void editarNomeConta(int id, String novoNome) throws NegocioException {
@@ -56,8 +72,8 @@ public class FinanceiroFachada {
     }
 
     // Gerenciamento de Transações
-    public void adicionarReceita(int contaId, double valor, String descricao) throws NegocioException {
-        controlador.adicionarReceita(contaId, valor, descricao);
+    public void adicionarReceita(int contaId, double valor, String descricao, Categoria categoria) throws NegocioException {
+        controlador.adicionarReceita(contaId, valor, descricao,categoria);
     }
 
     public void adicionarDespesa(int contaId, double valor, String descricao, int categoriaId) throws NegocioException, SaldoInsuficienteException {
@@ -98,12 +114,8 @@ public class FinanceiroFachada {
     }
 
     // Gerenciamento de Persistência
-    public void salvarDados() throws Exception {
-        controlador.salvarDados();
-    }
-
-    public void carregarDados() throws Exception {
-        controlador.carregarDados();
+    public void salvarDados() throws IOException {
+        PersistenciaDados.salvarDadosSerializacao(controlador, "dados.dat");
     }
 
     // Gerenciamento de Relatórios

@@ -1,9 +1,8 @@
 package Negocios;
 
-import java.io.Serializable;
+import java.io.Serializable;		
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.Objects;
+
 
 public class DespesaRecorrente extends Despesa implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -14,7 +13,7 @@ public class DespesaRecorrente extends Despesa implements Serializable {
     private LocalDate proximaOcorrencia;
 
     // Construtor
-    public DespesaRecorrente(double valor, Date data, String descricao, Conta conta, Categoria categoria, Periodicidade periodicidade, int numeroDeParcelas) {
+    public DespesaRecorrente(double valor, LocalDate data, String descricao, Conta conta, Categoria categoria, Periodicidade periodicidade, int numeroDeParcelas) {
         super(valor, data, descricao, conta, categoria);
         this.periodicidade = periodicidade;
         this.numeroDeParcelas = numeroDeParcelas;

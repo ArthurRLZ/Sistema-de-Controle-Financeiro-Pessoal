@@ -3,23 +3,25 @@ package Negocios;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
-import java.util.Date; // Usaremos o java.util.Date por compatibilidade
+
 
 public abstract class Transacao implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private int id;
     private double valor;
-    private Date data;
+    private LocalDate data;
     private String descricao;
     private Conta conta;
+    private Categoria categoria;
 
     // Construtor
-    public Transacao(double valor, Date data, String descricao, Conta conta) {
+    public Transacao(double valor, LocalDate data, String descricao, Conta conta, Categoria categoria) {
         this.valor = valor;
         this.data = data;
         this.descricao = descricao;
         this.conta = conta;
+        this.categoria = categoria;
     }
 
     // Getters e Setters
@@ -35,7 +37,7 @@ public abstract class Transacao implements Serializable {
         return valor;
     }
 
-    public Date getData() {
+    public LocalDate getData() {
         return data;
     }
 
@@ -51,7 +53,15 @@ public abstract class Transacao implements Serializable {
         return conta;
     }
 
-    // Métodos Padrão
+    public Categoria getCategoria() {
+		return categoria;
+	}
+
+	public void setCategoria(Categoria categoria) {
+		this.categoria = categoria;
+	}
+
+	// Métodos Padrão
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -71,6 +81,7 @@ public abstract class Transacao implements Serializable {
                 ", valor=" + valor +
                 ", data=" + data +
                 ", descricao='" + descricao + '\'' +
-                ", conta=" + conta.getNome();
+                ", conta=" + conta.getNome() +
+                ", categoria=" + categoria.getNome();
     }
 }

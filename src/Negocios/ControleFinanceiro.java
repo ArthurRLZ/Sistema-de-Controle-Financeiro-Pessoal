@@ -1,32 +1,29 @@
 package Negocios;
-
-import Dados.PersistenciaDados;
+	
 import Dados.RepositorioCategoria;
 import Dados.RepositorioConta;
 import Dados.RepositorioDespesaRecorrente;
 import Dados.RepositorioTransacao;
 import Negocios.exceptions.NegocioException;
 import Negocios.exceptions.SaldoInsuficienteException;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Date;
 import java.util.List;
+import java.time.LocalDate;
+import java.io.Serializable;
 
-public class ControleFinanceiro {
+public class ControleFinanceiro implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private RepositorioConta repositorioConta;
     private RepositorioCategoria repositorioCategoria;
     private RepositorioTransacao repositorioTransacao;
     private RepositorioDespesaRecorrente repositorioDespesaRecorrente;
-    private PersistenciaDados persistencia;
 
     // Construtor
-    public ControleFinanceiro() {
-        this.repositorioConta = new RepositorioConta();
-        this.repositorioCategoria = new RepositorioCategoria();
-        this.repositorioTransacao = new RepositorioTransacao();
-        this.repositorioDespesaRecorrente = new RepositorioDespesaRecorrente();
-        this.persistencia = new PersistenciaDados();
+    public ControleFinanceiro(RepositorioConta repositorioConta, RepositorioCategoria repositorioCategoria, RepositorioTransacao repositorioTransacao, RepositorioDespesaRecorrente repositorioDespesaRecorrente) {
+        this.repositorioConta = repositorioConta;
+        this.repositorioCategoria = repositorioCategoria;
+        this.repositorioTransacao = repositorioTransacao;
+        this.repositorioDespesaRecorrente = repositorioDespesaRecorrente;
     }
 
     // Gerenciamento de Contas
@@ -110,10 +107,10 @@ public class ControleFinanceiro {
     }
 
     // Gerenciamento de Transações
-    public void adicionarReceita(int contaId, double valor, String descricao) throws NegocioException {
+    public void adicionarReceita(int contaId, double valor, String descricao, Categoria categoria) throws NegocioException {
         Conta conta = buscarContaPorId(contaId);
         conta.creditar(valor);
-        Receita receita = new Receita(valor, new Date(), descricao, conta);
+        Receita receita = new Receita(valor, LocalDate.now(), descricao, conta, categoria);
         this.repositorioTransacao.adicionar(receita);
     }
 
@@ -121,7 +118,7 @@ public class ControleFinanceiro {
         Conta conta = buscarContaPorId(contaId);
         Categoria categoria = buscarCategoriaPorId(categoriaId);
         conta.debitar(valor);
-        Despesa despesa = new Despesa(valor, new Date(), descricao, conta, categoria);
+        Despesa despesa = new Despesa(valor, LocalDate.now(), descricao, conta, categoria);
         this.repositorioTransacao.adicionar(despesa);
     }
     
@@ -151,7 +148,7 @@ public class ControleFinanceiro {
     public void adicionarDespesaRecorrente(double valor, String descricao, int contaId, int categoriaId, Periodicidade periodicidade, int numeroDeParcelas) throws NegocioException {
         Conta conta = buscarContaPorId(contaId);
         Categoria categoria = buscarCategoriaPorId(categoriaId);
-        DespesaRecorrente dr = new DespesaRecorrente(valor, new Date(), descricao, conta, categoria, periodicidade, numeroDeParcelas);
+        DespesaRecorrente dr = new DespesaRecorrente(valor, LocalDate.now(), descricao, conta, categoria, periodicidade, numeroDeParcelas);
         this.repositorioDespesaRecorrente.adicionar(dr);
     }
     
@@ -185,26 +182,8 @@ public class ControleFinanceiro {
     }
     
     // Gerenciamento de Persistência
-    public void salvarDados() throws IOException {
-        persistencia.salvarObjeto(repositorioConta.listarTodas(), "contas.dat");
-        persistencia.salvarObjeto(repositorioCategoria.listarTodas(), "categorias.dat");
-        persistencia.salvarObjeto(repositorioTransacao.listarTodas(), "transacoes.dat");
-        persistencia.salvarObjeto(repositorioDespesaRecorrente.listarTodas(), "despesas_recorrentes.dat");
-    }
-
-    @SuppressWarnings("unchecked")
-    public void carregarDados() {
-        try {
-            repositorioConta.setContas((List<Conta>) persistencia.carregarObjeto("contas.dat"));
-            repositorioCategoria.setCategorias((List<Categoria>) persistencia.carregarObjeto("categorias.dat"));
-            repositorioTransacao.setTransacoes((List<Transacao>) persistencia.carregarObjeto("transacoes.dat"));
-            repositorioDespesaRecorrente.setDespesasRecorrentes((List<DespesaRecorrente>) persistencia.carregarObjeto("despesas_recorrentes.dat"));
-        } catch (FileNotFoundException e) {
-            System.out.println("Arquivos de dados não encontrados. Iniciando com sistema vazio.");
-        } catch (IOException | ClassNotFoundException e) {
-            System.err.println("Erro crítico ao carregar os dados: " + e.getMessage());
-        }
-    }
+    
+    
     
     // Gerenciamento de Relatórios
     public String gerarBalanco() {
