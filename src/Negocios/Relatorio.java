@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 public class Relatorio {
 
-    // gera um resumo  de receitas despesas e saldo final.
+    // gera um resumo de receitas despesas e saldo final
     public String gerarBalanco(ArrayList<Transacao> transacoes) {
         if (transacoes == null || transacoes.isEmpty()) {
             return "Nenhuma transação registrada.";
@@ -21,7 +21,7 @@ public class Relatorio {
             if (t instanceof Receita) {
                 receitas += t.getValor();
             } else if (t instanceof Despesa) {
-                despesas += t.getValor();
+                despesas += Math.abs(t.getValor());
             }
         }
 
@@ -40,17 +40,15 @@ public class Relatorio {
         Map<String, Double> gastosPorCategoria = new HashMap<>();
 
         for (Transacao t : transacoes) {
-            // Agora, verifica se a transação é uma Despesa
             if (t instanceof Despesa) {
                 String categoria = t.getCategoria().getNome();
-                double valor = t.getValor();
+                double valor = Math.abs(t.getValor());
 
                 gastosPorCategoria.put(categoria,
                         gastosPorCategoria.getOrDefault(categoria, 0.0) + valor);
             }
         }
 
-       
         StringBuilder sb = new StringBuilder("Relatório de Gastos por Categoria:\n");
         for (Map.Entry<String, Double> entry : gastosPorCategoria.entrySet()) {
             sb.append(entry.getKey()).append(": R$ ")
@@ -61,7 +59,6 @@ public class Relatorio {
         return sb.toString();
     }
 
-   
     // todos os relatórios por período organiado
     private ArrayList<Transacao> filtrarTransacoesPorPeriodo(ArrayList<Transacao> transacoes, LocalDate dataInicio, LocalDate dataFim) {
         if (transacoes == null) {
@@ -73,7 +70,7 @@ public class Relatorio {
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    //  mês que a gente quiser.
+    // mês que a gente quiser
     public String gerarRelatorioMensal(ArrayList<Transacao> todasTransacoes, int ano, int mes) {
         LocalDate dataInicio = LocalDate.of(ano, mes, 1);
         LocalDate dataFim = dataInicio.withDayOfMonth(dataInicio.lengthOfMonth());
@@ -85,7 +82,7 @@ public class Relatorio {
                gerarRelatorioGastoPorCategoria(transacoesDoMes);
     }
     
-    // trimestre 
+    // trimestre
     public String gerarRelatorioTrimestral(ArrayList<Transacao> todasTransacoes, int ano, int trimestre) {
         int mesInicial = (trimestre - 1) * 3 + 1;
         int mesFinal = mesInicial + 2;
@@ -110,7 +107,7 @@ public class Relatorio {
         
         ArrayList<Transacao> transacoesDoSemestre = filtrarTransacoesPorPeriodo(todasTransacoes, dataInicio, dataFim);
         
-        return "r elatório semestral (" + semestre + "º semestre de " + ano + ") ---\n" +
+        return "relatório semestral (" + semestre + "º semestre de " + ano + ") ---\n" +
                gerarBalanco(transacoesDoSemestre) + "\n\n" +
                gerarRelatorioGastoPorCategoria(transacoesDoSemestre);
     }
