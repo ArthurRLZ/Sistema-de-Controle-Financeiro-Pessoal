@@ -2,13 +2,11 @@ package Negocios;
 
 import Negocios.exceptions.NegocioException;
 import Negocios.exceptions.SaldoInsuficienteException;
-
 import java.io.Serializable;
 import java.util.Objects;
 
 public class Conta implements Serializable {
     private static final long serialVersionUID = 1L;
-
     private int id;
     private String nome;
     private double saldo;
@@ -41,19 +39,15 @@ public class Conta implements Serializable {
     public int getId() {
         return id;
     }
-
     public void setId(int id) {
         this.id = id;
     }
-
     public String getNome() {
         return nome;
     }
-
     public void setNome(String nome) {
         this.nome = nome;
     }
-
     public double getSaldo() {
         return saldo;
     }
@@ -70,14 +64,5 @@ public class Conta implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(id);
-    }
-
-    @Override
-    public String toString() {
-        return "Conta{" +
-                "id=" + id +
-                ", nome='" + nome + '\'' +
-                ", saldo=" + saldo +
-                '}';
     }
 }
