@@ -1,12 +1,14 @@
 package Negocios;
 
+import Dados.PersistenciaDados;
 import Dados.RepositorioCategoria;
 import Dados.RepositorioConta;
 import Dados.RepositorioDespesaRecorrente;
 import Dados.RepositorioTransacao;
 import Negocios.exceptions.NegocioException;
 import Negocios.exceptions.SaldoInsuficienteException;
-
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -16,6 +18,7 @@ public class ControleFinanceiro {
     private RepositorioCategoria repositorioCategoria;
     private RepositorioTransacao repositorioTransacao;
     private RepositorioDespesaRecorrente repositorioDespesaRecorrente;
+    private PersistenciaDados persistencia;
 
     // Construtor
     public ControleFinanceiro() {
@@ -23,6 +26,7 @@ public class ControleFinanceiro {
         this.repositorioCategoria = new RepositorioCategoria();
         this.repositorioTransacao = new RepositorioTransacao();
         this.repositorioDespesaRecorrente = new RepositorioDespesaRecorrente();
+        this.persistencia = new PersistenciaDados();
     }
 
     // Gerenciamento de Contas
@@ -144,10 +148,10 @@ public class ControleFinanceiro {
     }
     
     // Gerenciamento de Despesas Recorrentes
-    public void adicionarDespesaRecorrente(double valor, String descricao, int contaId, int categoriaId, Periodicidade periodicidade) throws NegocioException {
+    public void adicionarDespesaRecorrente(double valor, String descricao, int contaId, int categoriaId, Periodicidade periodicidade, int numeroDeParcelas) throws NegocioException {
         Conta conta = buscarContaPorId(contaId);
         Categoria categoria = buscarCategoriaPorId(categoriaId);
-        DespesaRecorrente dr = new DespesaRecorrente(valor, new Date(), descricao, conta, categoria, periodicidade);
+        DespesaRecorrente dr = new DespesaRecorrente(valor, new Date(), descricao, conta, categoria, periodicidade, numeroDeParcelas);
         this.repositorioDespesaRecorrente.adicionar(dr);
     }
     
@@ -155,9 +159,7 @@ public class ControleFinanceiro {
         List<DespesaRecorrente> recorrentes = this.repositorioDespesaRecorrente.listarTodas();
         for (DespesaRecorrente dr : recorrentes) {
             if (dr.isVencida()) {
-                // Adiciona a despesa real no registro de transações
                 adicionarDespesa(dr.getConta().getId(), dr.getValor(), dr.getDescricao(), dr.getCategoria().getId());
-                // Atualiza a despesa recorrente para a próxima data de vencimento
                 dr.atualizarParaProximaOcorrencia();
             }
         }
@@ -165,5 +167,73 @@ public class ControleFinanceiro {
     
     public List<DespesaRecorrente> listarDespesasRecorrentes() {
         return this.repositorioDespesaRecorrente.listarTodas();
+    }
+
+    public void removerDespesaRecorrente(int id) throws NegocioException {
+        // Regra: Apenas remove o "modelo" da despesa recorrente.
+        // As transações que ela já gerou continuam no histórico.
+        DespesaRecorrente dr = buscarDespesaRecorrentePorId(id);
+        this.repositorioDespesaRecorrente.remover(dr.getId());
+    }
+
+    public DespesaRecorrente buscarDespesaRecorrentePorId(int id) throws NegocioException {
+        DespesaRecorrente dr = this.repositorioDespesaRecorrente.buscarPorId(id);
+        if (dr == null) {
+            throw new NegocioException("Despesa Recorrente com ID " + id + " não encontrada.");
+        }
+        return dr;
+    }
+    
+    // Gerenciamento de Persistência
+    public void salvarDados() throws IOException {
+        persistencia.salvarObjeto(repositorioConta.listarTodas(), "contas.dat");
+        persistencia.salvarObjeto(repositorioCategoria.listarTodas(), "categorias.dat");
+        persistencia.salvarObjeto(repositorioTransacao.listarTodas(), "transacoes.dat");
+        persistencia.salvarObjeto(repositorioDespesaRecorrente.listarTodas(), "despesas_recorrentes.dat");
+    }
+
+    @SuppressWarnings("unchecked")
+    public void carregarDados() {
+        try {
+            repositorioConta.setContas((List<Conta>) persistencia.carregarObjeto("contas.dat"));
+            repositorioCategoria.setCategorias((List<Categoria>) persistencia.carregarObjeto("categorias.dat"));
+            repositorioTransacao.setTransacoes((List<Transacao>) persistencia.carregarObjeto("transacoes.dat"));
+            repositorioDespesaRecorrente.setDespesasRecorrentes((List<DespesaRecorrente>) persistencia.carregarObjeto("despesas_recorrentes.dat"));
+        } catch (FileNotFoundException e) {
+            System.out.println("Arquivos de dados não encontrados. Iniciando com sistema vazio.");
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Erro crítico ao carregar os dados: " + e.getMessage());
+        }
+    }
+    
+    // Gerenciamento de Relatórios
+    public String gerarBalanco() {
+        Relatorio relatorio = new Relatorio();
+        return relatorio.gerarBalanco(this.repositorioTransacao.listarTodas());
+    }
+
+    public String gerarRelatorioGastoPorCategoria() {
+        Relatorio relatorio = new Relatorio();
+        return relatorio.gerarRelatorioGastoPorCategoria(this.repositorioTransacao.listarTodas());
+    }
+    
+    public String gerarRelatorioMensal(int ano, int mes) {
+        Relatorio relatorio = new Relatorio();
+        return relatorio.gerarRelatorioMensal(this.repositorioTransacao.listarTodas(), ano, mes);
+    }
+
+    public String gerarRelatorioTrimestral(int ano, int trimestre) {
+        Relatorio relatorio = new Relatorio();
+        return relatorio.gerarRelatorioTrimestral(this.repositorioTransacao.listarTodas(), ano, trimestre);
+    }
+
+    public String gerarRelatorioSemestral(int ano, int semestre) {
+        Relatorio relatorio = new Relatorio();
+        return relatorio.gerarRelatorioSemestral(this.repositorioTransacao.listarTodas(), ano, semestre);
+    }
+    
+    public String exibirRelatorioAnual(int ano) {
+        Relatorio relatorio = new Relatorio();
+        return relatorio.gerarRelatorioAnual(this.repositorioTransacao.listarTodas(), ano);
     }
 }
