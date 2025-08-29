@@ -1,6 +1,9 @@
 package Fachada;
 
-import Dados.PersistenciaDados;		
+import Dados.PersistenciaDados;
+import Dados.RepositorioCategoria;
+import Dados.RepositorioConta;
+import Dados.RepositorioTransacao;
 import Negocios.Categoria;
 import Negocios.ControleFinanceiro;
 import Negocios.Relatorio;
@@ -19,34 +22,31 @@ public class FinanceiroFachada {
     private Relatorio relatorio;
 
     public FinanceiroFachada() {
-        this.controle = new ControleFinanceiro();
+    	RepositorioTransacao repoTransacao = new RepositorioTransacao();
+        RepositorioCategoria repoCategoria = new RepositorioCategoria();
+        RepositorioConta repoConta = new RepositorioConta();
+        
+    	this.controle = new ControleFinanceiro(repoTransacao, repoCategoria, repoConta);
         this.persistencia = new PersistenciaDados();
         this.relatorio = new Relatorio();
     }
 //TUDO: falta a persistencia e os relatorios, toda a outra parte das transacoes e categoria ja foram feitas
     
     // ===== Persistência =====
-    public void carregarDados(String tipo) {
-        persistencia.carregarDados(tipo, controle);
-    }
-
-    public void salvarDados(String tipo) {
-        persistencia.salvarDados(tipo, controle);
-    }
+  
 
     // ===== Conta =====
-    public void adicionarTransferencia(Conta origem, Conta destino, double valor, String descricao) {
-        controle.adicionarTransferencia(origem, destino, valor, descricao);
+    public void adicionarTransferencia(Conta origem, Conta destino, double valor,Categoria categoria, String descricao) {
+        controle.adicionarTransferencia(origem, destino, valor,categoria,descricao);
     }
-    
-    
+
     // ===== Transações =====
     public void adicionarTransacao(String tipo, String descricao, double valor, LocalDate data, Categoria categoria, Conta conta) { // Agora com o argumento Conta
         if ("receita".equalsIgnoreCase(tipo)) {
-            Receita novaReceita = new Receita(UUID.randomUUID().toString(), descricao, valor, data, conta);
+            Receita novaReceita = new Receita(UUID.randomUUID().toString(), descricao, valor, data, categoria, conta);
             controle.adicionarTransacao(novaReceita, categoria);
         } else if ("despesa".equalsIgnoreCase(tipo)) {
-            Despesa novaDespesa = new Despesa(UUID.randomUUID().toString(), descricao, valor, data, conta);
+            Despesa novaDespesa = new Despesa(UUID.randomUUID().toString(), descricao, valor, data, categoria, conta);
             controle.adicionarTransacao(novaDespesa, categoria);
         }
     }
@@ -100,14 +100,45 @@ public class FinanceiroFachada {
     public ArrayList<Categoria> listarCategorias() {
     	return controle.getCategorias();
     }
+    // ===== Despesas Recorrentes =====
+    public void adicionarDespesaRecorrente(String descricao, double valor, String categoriaId, String contaId, String frequencia, int numeroDeParcelas) {
+        Categoria categoria = controle.buscarCategoriaPorId(categoriaId);
+        Conta conta = controle.buscarContaPorId(contaId);
+        
+        if (categoria != null && conta != null && valor > 0) {
+        controle.adicionarDespesaRecorrente(descricao, valor, categoria, conta, frequencia, numeroDeParcelas);
+        }
+    }
+       
+    
+    public void processarDespesasRecorrentes() {
+        controle.processarDespesasRecorrentes();
+    }
+
 
     // ===== Relatórios =====
     public String exibirBalanco() {
-        return relatorio.exibirBalanco(controle);
+        return relatorio.gerarBalanco(controle.getTransacoes());
     }
 
     public String exibirRelatorioGastos() {
-        return relatorio.exibirRelatorioGastos(controle);
+        return relatorio.gerarRelatorioGastoPorCategoria(controle.getTransacoes());
+    }
+
+    public String exibirRelatorioMensal(int ano, int mes) {
+        return relatorio.gerarRelatorioMensal(controle.getTransacoes(), ano, mes);
+    }
+
+    public String exibirRelatorioTrimestral(int ano, int trimestre) {
+        return relatorio.gerarRelatorioTrimestral(controle.getTransacoes(), ano, trimestre);
+    }
+
+    public String exibirRelatorioSemestral(int ano, int semestre) {
+        return relatorio.gerarRelatorioSemestral(controle.getTransacoes(), ano, semestre);
+    }
+
+    public String exibirRelatorioAnual(int ano) {
+        return relatorio.gerarRelatorioAnual(controle.getTransacoes(), ano);
     }
 }
 
