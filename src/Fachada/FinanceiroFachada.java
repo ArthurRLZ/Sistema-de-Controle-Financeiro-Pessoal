@@ -1,149 +1,133 @@
 package Fachada;
 
-import Dados.PersistenciaDados;
-import Dados.RepositorioCategoria;
-import Dados.RepositorioConta;
-import Dados.RepositorioTransacao;
 import Negocios.*;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
+import Negocios.exceptions.NegocioException;
+import Negocios.exceptions.SaldoInsuficienteException;
+import java.util.List;
 
 public class FinanceiroFachada {
 
-    private ControleFinanceiro controle;
-    private PersistenciaDados persistencia;
+    private ControleFinanceiro controlador;
 
-    // O construtor recebe os repositorios e cria o controle e a persistencia
-    public FinanceiroFachada(RepositorioTransacao repoTransacao, RepositorioCategoria repoCategoria, RepositorioConta repoConta) {
-        this.controle = new ControleFinanceiro(repoTransacao, repoCategoria, repoConta);
-        this.persistencia = new PersistenciaDados();
+    public FinanceiroFachada() {
+        this.controlador = new ControleFinanceiro();
+    }
+
+    // Gerenciamento de Contas
+    public void criarConta(String nome) throws NegocioException {
+        controlador.criarConta(nome);
+    }
+
+    public void editarNomeConta(int id, String novoNome) throws NegocioException {
+        controlador.editarNomeConta(id, novoNome);
+    }
+
+    public void removerConta(int id) throws NegocioException {
+        controlador.removerConta(id);
+    }
+
+    public Conta buscarContaPorId(int id) throws NegocioException {
+        return controlador.buscarContaPorId(id);
+    }
+
+    public List<Conta> listarContas() {
+        return controlador.listarContas();
+    }
+
+    // Gerenciamento de Categorias
+    public void criarCategoria(String nome) throws NegocioException {
+        controlador.criarCategoria(nome);
     }
     
-    // ===== Persistencia =====
-    // Chamadas para salvar e carregar todas as listas
-    public void salvar() {
-        persistencia.salvarCategoriasCSV(controle.getCategorias());
-        persistencia.salvarContasCSV(controle.getContas());
-        persistencia.salvarTransacoesCSV(controle.getTransacoes());
-        // ... (e as despesas recorrentes, se implementado)
-    }
-
-    public void carregar() {
-        RepositorioCategoria repoCategoria = new RepositorioCategoria();
-        repoCategoria.setTodos(persistencia.carregarCategoriasCSV());
-        // ... (e as outras listas)
+    public void editarNomeCategoria(int id, String novoNome) throws NegocioException {
+        controlador.editarNomeCategoria(id, novoNome);
     }
     
-    // ===== Gerenciamento de Categorias =====
-    public void adicionarCategoria(String nome) {
-        controle.adicionarCategoria(nome);
+    public void removerCategoria(int id) throws NegocioException {
+        controlador.removerCategoria(id);
     }
 
-    public boolean removerCategoria(String id) {
-        return controle.removerCategoria(id);
+    public Categoria buscarCategoriaPorId(int id) throws NegocioException {
+        return controlador.buscarCategoriaPorId(id);
     }
 
-    public boolean editarCategoria(String id, String novoNome) {
-        return controle.editarCategoria(id, novoNome);
+    public List<Categoria> listarCategorias() {
+        return controlador.listarCategorias();
+    }
+
+    // Gerenciamento de Transações
+    public void adicionarReceita(int contaId, double valor, String descricao) throws NegocioException {
+        controlador.adicionarReceita(contaId, valor, descricao);
+    }
+
+    public void adicionarDespesa(int contaId, double valor, String descricao, int categoriaId) throws NegocioException, SaldoInsuficienteException {
+        controlador.adicionarDespesa(contaId, valor, descricao, categoriaId);
     }
     
-    public ArrayList<Categoria> listarCategorias() {
-        return controle.getCategorias();
-    }
-
-    // ===== Gerenciamento de Contas =====
-    public void adicionarConta(String nome, double saldoInicial) {
-        controle.adicionarConta(nome, saldoInicial);
+    public void removerTransacao(int id) throws NegocioException, SaldoInsuficienteException {
+        controlador.removerTransacao(id);
     }
     
-    public boolean removerConta(String id) {
-        return controle.removerConta(id);
-    }
-
-    public boolean editarConta(String id, String novoNome) {
-        return controle.editarConta(id, novoNome);
+    public Transacao buscarTransacaoPorId(int id) throws NegocioException {
+        return controlador.buscarTransacaoPorId(id);
     }
     
-    public ArrayList<Conta> listarContas() {
-        return controle.getContas();
-    }
-
-    // ===== Gerenciamento de Transações (Receita e Despesa) =====
-    public void adicionarReceita(String descricao, double valor, String categoriaId, String contaId) {
-        controle.adicionarReceita(descricao, valor, categoriaId, contaId);
-    }
-
-    public void adicionarDespesa(String descricao, double valor, String categoriaId, String contaId) {
-        controle.adicionarDespesa(descricao, valor, categoriaId, contaId);
-    }
-
-    public boolean removerTransacao(String id) {
-        return controle.removerTransacao(id);
+    public List<Transacao> listarTransacoes() {
+        return controlador.listarTransacoes();
     }
     
-    public ArrayList<Transacao> listarTransacoes() {
-        return controle.getTransacoes();
-    }
-
-    // Métodos para editar Transações
-    public boolean editarDescricaoTransacao(String id, String novaDescricao) {
-        return controle.editarDescricaoTransacao(id, novaDescricao);
+    // Gerenciamento de Despesas Recorrentes
+    public void adicionarDespesaRecorrente(double valor, String descricao, int contaId, int categoriaId, Periodicidade periodicidade, int numeroDeParcelas) throws NegocioException {
+        controlador.adicionarDespesaRecorrente(valor, descricao, contaId, categoriaId, periodicidade, numeroDeParcelas);
     }
     
-    public boolean editarValorTransacao(String id, double novoValor) {
-        return controle.editarValorTransacao(id, novoValor);
+    public void processarDespesasRecorrentes() throws NegocioException, SaldoInsuficienteException {
+        controlador.processarDespesasRecorrentes();
     }
     
-    public boolean editarDataTransacao(String id, LocalDate novaData) {
-        return controle.editarDataTransacao(id, novaData);
+    public List<DespesaRecorrente> listarDespesasRecorrentes() {
+        return controlador.listarDespesasRecorrentes();
+    }
+
+    public void removerDespesaRecorrente(int id) throws NegocioException {
+        controlador.removerDespesaRecorrente(id);
+    }
+
+    public DespesaRecorrente buscarDespesaRecorrentePorId(int id) throws NegocioException {
+        return controlador.buscarDespesaRecorrentePorId(id);
+    }
+
+    // Gerenciamento de Persistência
+    public void salvarDados() throws Exception {
+        controlador.salvarDados();
+    }
+
+    public void carregarDados() throws Exception {
+        controlador.carregarDados();
+    }
+
+    // Gerenciamento de Relatórios
+    public String gerarBalanco() {
+        return controlador.gerarBalanco();
+    }
+
+    public String gerarRelatorioGastoPorCategoria() {
+        return controlador.gerarRelatorioGastoPorCategoria();
     }
     
-    public boolean editarCategoriaTransacao(String id, String novaCategoriaId) {
-        return controle.editarCategoriaTransacao(id, novaCategoriaId);
-    }
-    
-    public boolean editarContaTransacao(String id, String novaContaId) {
-        return controle.editarContaTransacao(id, novaContaId);
+    public String gerarRelatorioMensal(int ano, int mes) {
+        return controlador.gerarRelatorioMensal(ano, mes);
     }
 
-    // ===== Gerenciamento de Despesas Recorrentes =====
-    public void adicionarDespesaRecorrente(String descricao, double valor, String categoriaId, String contaId, String frequencia, int numeroDeParcelas) {
-        controle.adicionarDespesaRecorrente(descricao, valor, categoriaId, contaId, frequencia, numeroDeParcelas);
-    }
-    
-    public void processarDespesasRecorrentes() {
-        controle.processarDespesasRecorrentes();
+    public String gerarRelatorioTrimestral(int ano, int trimestre) {
+        return controlador.gerarRelatorioTrimestral(ano, trimestre);
     }
 
-    // ===== Gerenciamento de Relatórios =====
-    public String exibirBalanco() {
-        Relatorio relatorio = new Relatorio();
-        return relatorio.gerarBalanco(controle.getTransacoes());
-    }
-
-    public String exibirRelatorioGastos() {
-        Relatorio relatorio = new Relatorio();
-        return relatorio.gerarRelatorioGastoPorCategoria(controle.getTransacoes());
-    }
-
-    public String exibirRelatorioMensal(int ano, int mes) {
-        Relatorio relatorio = new Relatorio();
-        return relatorio.gerarRelatorioMensal(controle.getTransacoes(), ano, mes);
-    }
-    
-    public String exibirRelatorioTrimestral(int ano, int trimestre) {
-        Relatorio relatorio = new Relatorio();
-        return relatorio.gerarRelatorioTrimestral(controle.getTransacoes(), ano, trimestre);
-    }
-
-    public String exibirRelatorioSemestral(int ano, int semestre) {
-        Relatorio relatorio = new Relatorio();
-        return relatorio.gerarRelatorioSemestral(controle.getTransacoes(), ano, semestre);
+    public String gerarRelatorioSemestral(int ano, int semestre) {
+        return controlador.gerarRelatorioSemestral(ano, semestre);
     }
     
     public String exibirRelatorioAnual(int ano) {
-        Relatorio relatorio = new Relatorio();
-        return relatorio.gerarRelatorioAnual(controle.getTransacoes(), ano);
+        return controlador.exibirRelatorioAnual(ano);
     }
 }
