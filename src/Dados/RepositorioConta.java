@@ -3,35 +3,38 @@ package Dados;
 import Negocios.Conta;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 public class RepositorioConta implements Serializable {
+    private List<Conta> contas = new ArrayList<>();
+    private int proximoId = 1;
 
-    private ArrayList<Conta> contas;
-
-    public RepositorioConta() {
-        this.contas = new ArrayList<>();
+    public void adicionar(Conta conta) {
+        conta.setId(this.proximoId++);
+        this.contas.add(conta);
     }
 
-    public void adicionar (Conta c){
-        if (c != null && !contas.contains(c)) {
-            contas.add(c);
-        }
+    public boolean remover(int id) {
+        return this.contas.removeIf(c -> c.getId() == id);
     }
 
-    public boolean remover(String id) {
-        return contas.removeIf( c -> c.getId().equals(id));
-    }
-
-    public Conta buscarPorId(String id){
-        for( Conta c : contas) {
-            if (c.getId().equals(id)){
+    public Conta buscarPorId(int id) {
+        for (Conta c : this.contas) {
+            if (c.getId() == id) {
                 return c;
             }
         }
         return null;
     }
 
-    public ArrayList<Conta> getTodos() {
-        return contas;
+    public List<Conta> listarTodas() {
+        return new ArrayList<>(this.contas);
+    }
+
+    public void setContas(List<Conta> contas) {
+        this.contas = contas;
+        if (!contas.isEmpty()) {
+            this.proximoId = contas.stream().mapToInt(Conta::getId).max().orElse(0) + 1;
+        }
     }
 }
