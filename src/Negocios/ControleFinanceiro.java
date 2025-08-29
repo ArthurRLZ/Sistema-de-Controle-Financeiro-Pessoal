@@ -45,11 +45,11 @@ public class ControleFinanceiro {
     }
 
     // Gerenciamento de Contas
-    public void adicionarConta(String nome) {
-        Conta c = new Conta(UUID.randomUUID().toString(), nome);
+    public void adicionarConta(String nome, double saldoInicial) {
+        Conta c = new Conta(UUID.randomUUID().toString(), nome, saldoInicial);
         repoConta.adicionar(c);
     }
-
+    
     public boolean removerConta(String id) {
         return repoConta.remover(id);
     }
@@ -74,6 +74,7 @@ public class ControleFinanceiro {
         if (categoria != null && conta != null && valor > 0) {
             Receita receita = new Receita(UUID.randomUUID().toString(), descricao, valor, LocalDate.now(), categoria, conta);
             repoTransacao.adicionar(receita);
+            conta.creditar(valor);
         }
     }
 
@@ -83,9 +84,10 @@ public class ControleFinanceiro {
         if (categoria != null && conta != null && valor > 0) {
             Despesa despesa = new Despesa(UUID.randomUUID().toString(), descricao, valor, LocalDate.now(), categoria, conta);
             repoTransacao.adicionar(despesa);
+            conta.debitar(valor);
         }
     }
-
+    
     public void adicionarTransacao(Transacao t) {
         if (t != null) {
             repoTransacao.adicionar(t);
@@ -113,6 +115,15 @@ public class ControleFinanceiro {
     public boolean editarValorTransacao(String id, double novoValor) {
         Transacao t = repoTransacao.buscarPorId(id);
         if (t != null) {
+            // Lógica para atualizar o saldo da conta
+            double valorAntigo = t.getValor();
+            if (t instanceof Despesa) {
+                t.getConta().creditar(Math.abs(valorAntigo));
+                t.getConta().debitar(novoValor);
+            } else if (t instanceof Receita) {
+                t.getConta().debitar(valorAntigo);
+                t.getConta().creditar(novoValor);
+            }
             t.setValor(novoValor);
             return true;
         }
@@ -152,9 +163,13 @@ public class ControleFinanceiro {
     public void adicionarTransferencia(String idOrigem, String idDestino, double valor, String descricao) {
         Conta origem = repoConta.buscarPorId(idOrigem);
         Conta destino = repoConta.buscarPorId(idDestino);
-        Categoria categoriaTransferencia = new Categoria(UUID.randomUUID().toString(), "Transferencia");
+        
+        if (origem != null && destino != null && valor > 0 && origem.getSaldo() >= valor) {
+            origem.debitar(valor);
+            destino.creditar(valor);
+            
+            Categoria categoriaTransferencia = new Categoria(UUID.randomUUID().toString(), "Transferencia");
 
-        if (origem != null && destino != null && valor > 0) {
             Despesa despesa = new Despesa(UUID.randomUUID().toString(), "Transferencia para " + destino.getNome() + ": " + descricao, valor, LocalDate.now(), categoriaTransferencia, origem);
             Receita receita = new Receita(UUID.randomUUID().toString(), "Transferencia de " + origem.getNome() + ": " + descricao, valor, LocalDate.now(), categoriaTransferencia, destino);
             
@@ -189,6 +204,7 @@ public class ControleFinanceiro {
                 );
                 
                 repoTransacao.adicionar(novaDespesa);
+                dr.getConta().debitar(Math.abs(dr.getValor()));
                 dr.setDataUltimaCobranca(hoje);
                 dr.setNumeroDeParcelas(dr.getNumeroDeParcelas() - 1);
 
