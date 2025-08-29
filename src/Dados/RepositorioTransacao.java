@@ -3,34 +3,38 @@ package Dados;
 import Negocios.Transacao;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
-public class RepositoriTransacao implements Serializable {
-    private ArrayList<Transacao> transacoes;
+public class RepositorioTransacao implements Serializable {
+    private List<Transacao> transacoes = new ArrayList<>();
+    private int proximoId = 1;
 
-    public RepositorioTransacao() {
-        this.transacoes = new ArrayList <>();
+    public void adicionar(Transacao transacao) {
+        transacao.setId(this.proximoId++);
+        this.transacoes.add(transacao);
     }
 
-    public void adicionar (Transacao t) {
-        if (t != null && !transacoes.contains(t)) {
-            transacoes.add(t);
-        }
+    public boolean remover(int id) {
+        return this.transacoes.removeIf(t -> t.getId() == id);
     }
 
-    public boolean remover (String id) {
-        return transacoes.removeIf ( t-> t.getId().equals(id));
-    }
-
-    public Transacao buscarPorId(String id) {
-        for ( Transacao t : transacoes ) {
-            if (t.getId().equals(id)) {
+    public Transacao buscarPorId(int id) {
+        for (Transacao t : this.transacoes) {
+            if (t.getId() == id) {
                 return t;
             }
         }
         return null;
     }
 
-    public ArratList<Transacao> getTodos () {
-        return transacoes;
+    public List<Transacao> listarTodas() {
+        return new ArrayList<>(this.transacoes);
+    }
+
+    public void setTransacoes(List<Transacao> transacoes) {
+        this.transacoes = transacoes;
+        if (!transacoes.isEmpty()) {
+            this.proximoId = transacoes.stream().mapToInt(Transacao::getId).max().orElse(0) + 1;
+        }
     }
 }
