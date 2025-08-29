@@ -2,217 +2,168 @@ package Negocios;
 
 import Dados.RepositorioCategoria;
 import Dados.RepositorioConta;
+import Dados.RepositorioDespesaRecorrente;
 import Dados.RepositorioTransacao;
-import java.time.LocalDate;
-import java.util.ArrayList;
+import Negocios.exceptions.NegocioException;
+import Negocios.exceptions.SaldoInsuficienteException;
+
+import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 public class ControleFinanceiro {
-    private RepositorioTransacao repoTransacao;
-    private RepositorioCategoria repoCategoria;
-    private RepositorioConta repoConta;
-    private ArrayList<DespesaRecorrente> despesasRecorrentes;
 
-    public ControleFinanceiro(RepositorioTransacao repoTransacao, RepositorioCategoria repoCategoria, RepositorioConta repoConta) {
-        this.repoTransacao = repoTransacao;
-        this.repoCategoria = repoCategoria;
-        this.repoConta = repoConta;
-        this.despesasRecorrentes = new ArrayList<>();
-    }
+    private RepositorioConta repositorioConta;
+    private RepositorioCategoria repositorioCategoria;
+    private RepositorioTransacao repositorioTransacao;
+    private RepositorioDespesaRecorrente repositorioDespesaRecorrente;
 
-    // Gerenciamento de Categorias
-    public void adicionarCategoria(String nome) {
-        Categoria c = new Categoria(UUID.randomUUID().toString(), nome);
-        repoCategoria.adicionar(c);
-    }
-
-    public boolean removerCategoria(String id) {
-        return repoCategoria.remover(id);
-    }
-
-    public boolean editarCategoria(String id, String novoNome) {
-        Categoria c = repoCategoria.buscarPorId(id);
-        if (c != null) {
-            c.setNome(novoNome);
-            return true;
-        }
-        return false;
-    }
-
-    public ArrayList<Categoria> getCategorias() {
-        return repoCategoria.getTodos();
+    // Construtor
+    public ControleFinanceiro() {
+        this.repositorioConta = new RepositorioConta();
+        this.repositorioCategoria = new RepositorioCategoria();
+        this.repositorioTransacao = new RepositorioTransacao();
+        this.repositorioDespesaRecorrente = new RepositorioDespesaRecorrente();
     }
 
     // Gerenciamento de Contas
-    public void adicionarConta(String nome, double saldoInicial) {
-        Conta c = new Conta(UUID.randomUUID().toString(), nome, saldoInicial);
-        repoConta.adicionar(c);
+    public void criarConta(String nome) throws NegocioException {
+        if (nome == null || nome.trim().isEmpty()) {
+            throw new NegocioException("O nome da conta não pode ser vazio.");
+        }
+        Conta novaConta = new Conta(nome);
+        this.repositorioConta.adicionar(novaConta);
+    }
+
+    public void editarNomeConta(int id, String novoNome) throws NegocioException {
+        if (novoNome == null || novoNome.trim().isEmpty()) {
+            throw new NegocioException("O novo nome da conta não pode ser vazio.");
+        }
+        Conta conta = buscarContaPorId(id);
+        conta.setNome(novoNome);
+    }
+
+    public void removerConta(int id) throws NegocioException {
+        Conta conta = buscarContaPorId(id);
+        boolean contaTemTransacao = this.repositorioTransacao.listarTodas().stream()
+                .anyMatch(t -> t.getConta().equals(conta));
+        if (contaTemTransacao) {
+            throw new NegocioException("Não é possível remover uma conta que possui transações.");
+        }
+        this.repositorioConta.remover(id);
+    }
+
+    public Conta buscarContaPorId(int id) throws NegocioException {
+        Conta conta = this.repositorioConta.buscarPorId(id);
+        if (conta == null) {
+            throw new NegocioException("Conta com ID " + id + " não encontrada.");
+        }
+        return conta;
+    }
+
+    public List<Conta> listarContas() {
+        return this.repositorioConta.listarTodas();
+    }
+
+    // Gerenciamento de Categorias
+    public void criarCategoria(String nome) throws NegocioException {
+        if (nome == null || nome.trim().isEmpty()) {
+            throw new NegocioException("O nome da categoria não pode ser vazio.");
+        }
+        Categoria novaCategoria = new Categoria(nome);
+        this.repositorioCategoria.adicionar(novaCategoria);
     }
     
-    public boolean removerConta(String id) {
-        return repoConta.remover(id);
-    }
-
-    public boolean editarConta(String id, String novoNome) {
-        Conta c = repoConta.buscarPorId(id);
-        if (c != null) {
-            c.setNome(novoNome);
-            return true;
+    public void editarNomeCategoria(int id, String novoNome) throws NegocioException {
+        if (novoNome == null || novoNome.trim().isEmpty()) {
+            throw new NegocioException("O novo nome da categoria não pode ser vazio.");
         }
-        return false;
-    }
-
-    public ArrayList<Conta> getContas() {
-        return repoConta.getTodos();
-    }
-
-    // Gerenciamento de Transações (Receita e Despesa)
-    public void adicionarReceita(String descricao, double valor, String categoriaId, String contaId) {
-        Categoria categoria = repoCategoria.buscarPorId(categoriaId);
-        Conta conta = repoConta.buscarPorId(contaId);
-        if (categoria != null && conta != null && valor > 0) {
-            Receita receita = new Receita(UUID.randomUUID().toString(), descricao, valor, LocalDate.now(), categoria, conta);
-            repoTransacao.adicionar(receita);
-            conta.creditar(valor);
-        }
-    }
-
-    public void adicionarDespesa(String descricao, double valor, String categoriaId, String contaId) {
-        Categoria categoria = repoCategoria.buscarPorId(categoriaId);
-        Conta conta = repoConta.buscarPorId(contaId);
-        if (categoria != null && conta != null && valor > 0) {
-            Despesa despesa = new Despesa(UUID.randomUUID().toString(), descricao, valor, LocalDate.now(), categoria, conta);
-            repoTransacao.adicionar(despesa);
-            conta.debitar(valor);
-        }
+        Categoria categoria = buscarCategoriaPorId(id);
+        categoria.setNome(novoNome);
     }
     
-    public void adicionarTransacao(Transacao t) {
-        if (t != null) {
-            repoTransacao.adicionar(t);
+    public void removerCategoria(int id) throws NegocioException {
+        Categoria categoria = buscarCategoriaPorId(id);
+        boolean categoriaEmUso = this.repositorioTransacao.listarTodas().stream()
+                .filter(t -> t instanceof Despesa)
+                .map(t -> (Despesa) t)
+                .anyMatch(d -> d.getCategoria().equals(categoria));
+        if (categoriaEmUso) {
+            throw new NegocioException("Não é possível remover uma categoria que está em uso por uma despesa.");
         }
+        this.repositorioCategoria.remover(id);
     }
 
-    public boolean removerTransacao(String id) {
-        return repoTransacao.remover(id);
-    }
-
-    public ArrayList<Transacao> getTransacoes() {
-        return repoTransacao.getTodos();
-    }
-
-    // Métodos para editar Transações
-    public boolean editarDescricaoTransacao(String id, String novaDescricao) {
-        Transacao t = repoTransacao.buscarPorId(id);
-        if (t != null) {
-            t.setDescricao(novaDescricao);
-            return true;
+    public Categoria buscarCategoriaPorId(int id) throws NegocioException {
+        Categoria categoria = this.repositorioCategoria.buscarPorId(id);
+        if (categoria == null) {
+            throw new NegocioException("Categoria com ID " + id + " não encontrada.");
         }
-        return false;
+        return categoria;
     }
 
-    public boolean editarValorTransacao(String id, double novoValor) {
-        Transacao t = repoTransacao.buscarPorId(id);
-        if (t != null) {
-            // Lógica para atualizar o saldo da conta
-            double valorAntigo = t.getValor();
-            if (t instanceof Despesa) {
-                t.getConta().creditar(Math.abs(valorAntigo));
-                t.getConta().debitar(novoValor);
-            } else if (t instanceof Receita) {
-                t.getConta().debitar(valorAntigo);
-                t.getConta().creditar(novoValor);
-            }
-            t.setValor(novoValor);
-            return true;
-        }
-        return false;
+    public List<Categoria> listarCategorias() {
+        return this.repositorioCategoria.listarTodas();
     }
 
-    public boolean editarDataTransacao(String id, LocalDate novaData) {
-        Transacao t = repoTransacao.buscarPorId(id);
-        if (t != null) {
-            t.setData(novaData);
-            return true;
-        }
-        return false;
+    // Gerenciamento de Transações
+    public void adicionarReceita(int contaId, double valor, String descricao) throws NegocioException {
+        Conta conta = buscarContaPorId(contaId);
+        conta.creditar(valor);
+        Receita receita = new Receita(valor, new Date(), descricao, conta);
+        this.repositorioTransacao.adicionar(receita);
     }
 
-    public boolean editarCategoriaTransacao(String id, String novaCategoriaId) {
-        Transacao t = repoTransacao.buscarPorId(id);
-        Categoria novaCategoria = repoCategoria.buscarPorId(novaCategoriaId);
-        if (t != null && novaCategoria != null) {
-            t.setCategoria(novaCategoria);
-            return true;
-        }
-        return false;
-    }
-
-    public boolean editarContaTransacao(String id, String novaContaId) {
-        Transacao t = repoTransacao.buscarPorId(id);
-        Conta novaConta = repoConta.buscarPorId(novaContaId);
-        if (t != null && novaConta != null) {
-            t.setConta(novaConta);
-            return true;
-        }
-        return false;
+    public void adicionarDespesa(int contaId, double valor, String descricao, int categoriaId) throws NegocioException, SaldoInsuficienteException {
+        Conta conta = buscarContaPorId(contaId);
+        Categoria categoria = buscarCategoriaPorId(categoriaId);
+        conta.debitar(valor);
+        Despesa despesa = new Despesa(valor, new Date(), descricao, conta, categoria);
+        this.repositorioTransacao.adicionar(despesa);
     }
     
-    // Transferência entre Contas
-    public void adicionarTransferencia(String idOrigem, String idDestino, double valor, String descricao) {
-        Conta origem = repoConta.buscarPorId(idOrigem);
-        Conta destino = repoConta.buscarPorId(idDestino);
-        
-        if (origem != null && destino != null && valor > 0 && origem.getSaldo() >= valor) {
-            origem.debitar(valor);
-            destino.creditar(valor);
-            
-            Categoria categoriaTransferencia = new Categoria(UUID.randomUUID().toString(), "Transferencia");
-
-            Despesa despesa = new Despesa(UUID.randomUUID().toString(), "Transferencia para " + destino.getNome() + ": " + descricao, valor, LocalDate.now(), categoriaTransferencia, origem);
-            Receita receita = new Receita(UUID.randomUUID().toString(), "Transferencia de " + origem.getNome() + ": " + descricao, valor, LocalDate.now(), categoriaTransferencia, destino);
-            
-            repoTransacao.adicionar(despesa);
-            repoTransacao.adicionar(receita);
+    public void removerTransacao(int id) throws NegocioException, SaldoInsuficienteException {
+        Transacao transacao = buscarTransacaoPorId(id);
+        if (transacao instanceof Receita) {
+            transacao.getConta().debitar(transacao.getValor());
+        } else if (transacao instanceof Despesa) {
+            transacao.getConta().creditar(transacao.getValor());
         }
-    }
-
-    // Despesas Recorrentes
-    public void adicionarDespesaRecorrente(String descricao, double valor, String categoriaId, String contaId, String frequencia, int numeroDeParcelas) {
-        Categoria categoria = repoCategoria.buscarPorId(categoriaId);
-        Conta conta = repoConta.buscarPorId(contaId);
-        if (categoria != null && conta != null && valor > 0) {
-            DespesaRecorrente dr = new DespesaRecorrente(UUID.randomUUID().toString(), descricao, valor, LocalDate.now(), categoria, conta, frequencia, numeroDeParcelas);
-            this.despesasRecorrentes.add(dr);
-        }
+        this.repositorioTransacao.remover(id);
     }
     
-    public void processarDespesasRecorrentes() {
-        LocalDate hoje = LocalDate.now();
-        ArrayList<DespesaRecorrente> despesasParaRemover = new ArrayList<>();
-
-        for (DespesaRecorrente dr : this.despesasRecorrentes) {
-            if (dr.getNumeroDeParcelas() > 0 && !hoje.isBefore(dr.calcularProximaData())) {
-                Despesa novaDespesa = new Despesa(
-                    UUID.randomUUID().toString(),
-                    dr.getDescricao(),
-                    dr.getValor(),
-                    hoje,
-                    dr.getCategoria(),
-                    dr.getConta()
-                );
-                
-                repoTransacao.adicionar(novaDespesa);
-                dr.getConta().debitar(Math.abs(dr.getValor()));
-                dr.setDataUltimaCobranca(hoje);
-                dr.setNumeroDeParcelas(dr.getNumeroDeParcelas() - 1);
-
-                if (dr.getNumeroDeParcelas() == 0) {
-                    despesasParaRemover.add(dr);
-                }
+    public Transacao buscarTransacaoPorId(int id) throws NegocioException {
+        Transacao transacao = this.repositorioTransacao.buscarPorId(id);
+        if (transacao == null) {
+            throw new NegocioException("Transação com ID " + id + " não encontrada.");
+        }
+        return transacao;
+    }
+    
+    public List<Transacao> listarTransacoes() {
+        return this.repositorioTransacao.listarTodas();
+    }
+    
+    // Gerenciamento de Despesas Recorrentes
+    public void adicionarDespesaRecorrente(double valor, String descricao, int contaId, int categoriaId, Periodicidade periodicidade) throws NegocioException {
+        Conta conta = buscarContaPorId(contaId);
+        Categoria categoria = buscarCategoriaPorId(categoriaId);
+        DespesaRecorrente dr = new DespesaRecorrente(valor, new Date(), descricao, conta, categoria, periodicidade);
+        this.repositorioDespesaRecorrente.adicionar(dr);
+    }
+    
+    public void processarDespesasRecorrentes() throws NegocioException, SaldoInsuficienteException {
+        List<DespesaRecorrente> recorrentes = this.repositorioDespesaRecorrente.listarTodas();
+        for (DespesaRecorrente dr : recorrentes) {
+            if (dr.isVencida()) {
+                // Adiciona a despesa real no registro de transações
+                adicionarDespesa(dr.getConta().getId(), dr.getValor(), dr.getDescricao(), dr.getCategoria().getId());
+                // Atualiza a despesa recorrente para a próxima data de vencimento
+                dr.atualizarParaProximaOcorrencia();
             }
         }
-        this.despesasRecorrentes.removeAll(despesasParaRemover);
+    }
+    
+    public List<DespesaRecorrente> listarDespesasRecorrentes() {
+        return this.repositorioDespesaRecorrente.listarTodas();
     }
 }
