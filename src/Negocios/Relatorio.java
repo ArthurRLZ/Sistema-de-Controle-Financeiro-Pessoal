@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 public class Relatorio {
 
     // Gera um resumo de receitas, despesas e saldo final
-    private String gerarBalanco(List<Transacao> transacoes) {
+    public String gerarBalanco(List<Transacao> transacoes) {
         if (transacoes == null || transacoes.isEmpty()) {
             return "Nenhuma transação no período.\n";
         }
@@ -36,7 +36,7 @@ public class Relatorio {
     }
 
     // Gera um relatório que mostra o total gasto em cada categoria
-    private String gerarRelatorioGastoPorCategoria(List<Transacao> transacoes) {
+    public String gerarRelatorioGastoPorCategoria(List<Transacao> transacoes) {
         Map<String, Double> gastosPorCategoria = transacoes.stream()
                 .filter(t -> t instanceof Despesa)
                 .map(t -> (Despesa) t)
