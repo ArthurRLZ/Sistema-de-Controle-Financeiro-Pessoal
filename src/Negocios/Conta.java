@@ -65,4 +65,13 @@ public class Conta implements Serializable {
     public int hashCode() {
         return Objects.hash(id);
     }
+
+    @Override
+    public String toString() {
+        return "Conta{" +
+                "id=" + id +
+                ", nome='" + nome + '\'' +
+                ", saldo=" + saldo +
+                '}';
+    }
 }

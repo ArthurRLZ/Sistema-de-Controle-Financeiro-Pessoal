@@ -1,8 +1,10 @@
 package UI;
 
+import java.util.List;
 import java.util.Scanner;
 
 import Fachada.FinanceiroFachada;
+import Negocios.Conta;
 
 public class Main {
     public static void main(String[] args){
@@ -29,6 +31,9 @@ public class Main {
                                 System.out.println("\n==== Gerenciar Contas ====");
                                 System.out.println("1. Criar Conta");
                                 System.out.println("2. Editar Nome da Conta");
+                                System.out.println("3. Remover Conta");
+                                System.out.println("4. Buscar Conta Por ID");
+                                System.out.println("5. Listar Contas");
                                 System.out.println("0. Voltar");
                                 System.out.print("Opção: ");
                                 String opcaoConta = scanner.nextLine();
@@ -37,15 +42,61 @@ public class Main {
                                     case "1":
                                         System.out.print("Digite o nome da nova conta: ");
                                         String nomeConta = scanner.nextLine();
-                                        // aqui vai a lógica de criar a conta
+
+                                        fachada.criarConta(nomeConta);
+
                                         System.out.println("Conta criada com sucesso!");
                                         break;
 
                                     case "2":
                                         System.out.print("Digite o ID que deseja editar: ");
-                                        String nomeAntigo = scanner.nextLine();
-                                        // aqui vai a lógica de editar o nome
+                                        int idNomeAntigo = scanner.nextInt();
+                                        scanner.nextLine();
+
+                                        System.out.print("Digite o novo nome para a conta: ");
+                                        String novoNome = scanner.nextLine();
+
+                                        fachada.editarNomeConta(idNomeAntigo, novoNome);
+
                                         System.out.println("Conta editada com sucesso!");
+                                        break;
+
+                                    case "3":
+                                        System.out.print("Digite o ID da conta à ser removida: ");
+                                        int idExcluir = scanner.nextInt();
+                                        scanner.nextLine();
+
+                                        fachada.removerConta(idExcluir);
+
+                                        System.out.println("Conta removida com sucesso!");
+                                        break;
+
+                                    case "4":
+                                        System.out.print("Digite o ID da conta: ");
+                                        int idBusca = scanner.nextInt();
+                                        scanner.nextLine();
+
+                                        Conta encontrado = fachada.buscarContaPorId(idBusca);
+
+                                        if (encontrado != null) {
+                                            System.out.println("Conta encontrada:");
+                                            System.out.println(encontrado);
+                                        }
+
+                                        break;
+
+                                    case "5":
+                                        System.out.print("Lista de Contas: ");
+                                        List<Conta> listaContas = fachada.listarContas();
+
+                                        if (listaContas.isEmpty()) {
+                                            System.out.println("Nenhum médico cadastrado.");
+                                        } else {
+                                            for (Conta c : listaContas) {
+                                                System.out.println(c);
+                                            }
+                                        }
+
                                         break;
 
                                     case "0":
