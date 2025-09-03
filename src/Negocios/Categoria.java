@@ -7,6 +7,11 @@ public class Categoria implements Serializable {
     private static final long serialVersionUID = 1L;
     private int id;
     private String nome;
+    
+    public Categoria(String nome, int id) {
+    	this.nome = nome;
+    	this.id = id;
+    }
 
     public Categoria(String nome) {
         this.nome = nome;
