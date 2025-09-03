@@ -117,6 +117,21 @@ public class FinanceiroFachada {
     public void salvarDados() throws IOException {
         PersistenciaDados.salvarDadosSerializacao(controlador, "dados.dat");
     }
+    public void salvarDados(String tipo) throws IOException {
+        if ("serializacao".equalsIgnoreCase(tipo)) {
+            PersistenciaDados.salvarDadosSerializacao(controlador, "dados.dat");
+        } else if ("csv".equalsIgnoreCase(tipo)) {
+            PersistenciaDados.salvarDadosCSV(controlador, "dados");
+        }
+    }
+
+    public void carregarDados(String tipo) throws IOException {
+        if ("serializacao".equalsIgnoreCase(tipo)) {
+            this.controlador = PersistenciaDados.carregarDadosSerializacao("dados.dat");
+        } else if ("csv".equalsIgnoreCase(tipo)) {
+            this.controlador = PersistenciaDados.carregarDadosCSV("dados");
+        }
+    }
 
     // Gerenciamento de Relatórios
     public String gerarBalanco() {

@@ -16,6 +16,12 @@ public class Conta implements Serializable {
         this.nome = nome;
         this.saldo = 0.0;
     }
+    
+    public Conta(int id, String nome, double saldo) {
+        this.id = id;
+        this.nome = nome;
+        this.saldo = saldo;
+    }
 
     // Métodos de Operação da Conta
     public void creditar(double valor) throws NegocioException {
