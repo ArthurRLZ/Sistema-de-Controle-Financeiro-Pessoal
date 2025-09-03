@@ -13,7 +13,7 @@ public class FinanceiroFachada {
     private ControleFinanceiro controlador;
 
     public FinanceiroFachada() {
-        // Tenta carregar o estado do sistema a partir de um arquivo
+        // Tenta carregar o sistema a partir de um arquivo
         this.controlador = PersistenciaDados.carregarDadosSerializacao("dados.dat");
         // Se o arquivo não existir (ou houver um erro), cria um novo controlador
         // com repositórios vazios
@@ -114,22 +114,38 @@ public class FinanceiroFachada {
     }
 
     // Gerenciamento de Persistência
-    public void salvarDados() throws IOException {
-        PersistenciaDados.salvarDadosSerializacao(controlador, "dados.dat");
-    }
+     
+    // salva com um nome de arquivo padrão
     public void salvarDados(String tipo) throws IOException {
-        if ("serializacao".equalsIgnoreCase(tipo)) {
-            PersistenciaDados.salvarDadosSerializacao(controlador, "dados.dat");
-        } else if ("csv".equalsIgnoreCase(tipo)) {
-            PersistenciaDados.salvarDadosCSV(controlador, "dados");
-        }
+        salvarDados(tipo, "dados.dat");
     }
 
-    public void carregarDados(String tipo) throws IOException {
+    // salva com um nome de arquivo especificado
+    public void salvarDados(String tipo, String nomeArquivo) throws IOException {
         if ("serializacao".equalsIgnoreCase(tipo)) {
-            this.controlador = PersistenciaDados.carregarDadosSerializacao("dados.dat");
+            PersistenciaDados.salvarDadosSerializacao(controlador, nomeArquivo);
         } else if ("csv".equalsIgnoreCase(tipo)) {
-            this.controlador = PersistenciaDados.carregarDadosCSV("dados");
+            PersistenciaDados.salvarDadosCSV(controlador, nomeArquivo);
+        }
+    }
+    
+    // carrega com um nome de arquivo padrão
+    public void carregarDados(String tipo) throws IOException {
+        carregarDados(tipo, "dados.dat");
+    }
+    
+    //carrega com um nome de arquivo especificado
+    public void carregarDados(String tipo, String nomeArquivo) throws IOException {
+        if ("serializacao".equalsIgnoreCase(tipo)) {
+            ControleFinanceiro carregado = PersistenciaDados.carregarDadosSerializacao(nomeArquivo);
+            if (carregado != null) {
+                this.controlador = carregado;
+            }
+        } else if ("csv".equalsIgnoreCase(tipo)) {
+            ControleFinanceiro carregado = PersistenciaDados.carregarDadosCSV(nomeArquivo);
+            if (carregado != null) {
+                this.controlador = carregado;
+            }
         }
     }
 
