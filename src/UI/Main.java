@@ -64,7 +64,7 @@ public class Main {
                                         System.out.print("Digite o ID que deseja editar: ");
                                         idTemp = scanner.nextInt();
                                         scanner.nextLine();
-                                        }catch(InputMismatchException e){
+                                        }catch(NegocioException e){
                                             System.out.println("Erro: digite um numero inteiro valido para o ID!");
                                             scanner.nextLine();
                                             break;
@@ -84,7 +84,7 @@ public class Main {
                                         scanner.nextLine();
                                         fachada.removerConta(idTemp);
                                         System.out.println("Conta removida com sucesso!");
-                                        }catch(InputMismatchException e){
+                                        }catch(NegocioException e){
                                             System.out.println("Erro: digite um numero inteiro valido para o ID!");
                                             scanner.nextLine();
                                             break;
@@ -267,11 +267,12 @@ public class Main {
                                         idTempDois = scanner.nextInt();
                                         scanner.nextLine();
                                         categoriaTemp = fachada.buscarCategoriaPorId(idTempDois);
-
+                                        try{
                                         fachada.adicionarReceita(idTemp, valorTemp, descTemp, categoriaTemp);
-
                                         System.out.println("Receita adicionada com sucesso. ");
-                                        break;
+                                        }catch(NegocioException e){
+                                            System.out.println("Erro: "+e,getMessage());
+                                        }
 
                                     case "2":
                                         System.out.print("Digite o id da conta: ");
@@ -288,33 +289,40 @@ public class Main {
                                         System.out.print("Digite o id da categoria: ");
                                         idTempDois = scanner.nextInt();
                                         scanner.nextLine();
-
+                                        try{
                                         fachada.adicionarDespesa(idTemp, valorTemp, descTemp, idTempDois);
-
                                         System.out.println("Despesa adicionada com sucesso. ");
-
+                                        }catch(NegocioException e){
+                                            System.out.println("Erro: "+e.getMessage());
+                                        }catch(SaldoInsuficienteException e){
+                                            System.out.println("Erro: "+e.getMessage());
+                                        }
                                         break;
+
                                     case "3":
                                         System.out.print("Digite o id da transação: ");
                                         idTemp = scanner.nextInt();
                                         scanner.nextLine();
-
+                                        try{
                                         fachada.removerTransacao(idTemp);
-
                                         System.out.println("Transação excluída com sucesso. ");
-
+                                        }catch(NegocioException e){
+                                            throw new NegocioException("Erro: "+e.getMessage());
+                                        }catch(SaldoInsuficienteException e){
+                                            throw new SaldoInsuficienteException("Erro: "+e.getMessage());
+                                        }
                                         break;
 
                                     case "4":
                                         System.out.print("Digite o id da transação: ");
                                         idTemp = scanner.nextInt();
                                         scanner.nextLine();
-
+                                        try{
                                         transacaoTemp = fachada.buscarTransacaoPorId(idTemp);
-
-                                        if (transacaoTemp != null) {
-                                            System.out.println("Transação encontrada:");
-                                            System.out.println(transacaoTemp);
+                                        System.out.println("Transação encontrada:");
+                                        System.out.println(transacaoTemp);
+                                        }catch(NegocioException e){
+                                            System.out.println("Erro: "+e.getMessage());
                                         }
                                         break;
 
@@ -329,7 +337,6 @@ public class Main {
                                                 System.out.println(t);
                                             }
                                         }
-
                                         break;
 
                                     case "0":

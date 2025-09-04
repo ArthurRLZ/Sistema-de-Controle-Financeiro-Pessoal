@@ -45,12 +45,15 @@ public class ControleFinanceiro implements Serializable {
 
     public void removerConta(int id) throws NegocioException {
         Conta conta = buscarContaPorId(id);
+        if(conta == null){
+            throw new NegocioException("Conta com ID: "+id+" não encontrada.");
+        }
         boolean contaTemTransacao = this.repositorioTransacao.listarTodas().stream()
                 .anyMatch(t -> t.getConta().equals(conta));
         if (contaTemTransacao) {
             throw new NegocioException("Não é possível remover uma conta que possui transações.");
         }
-        this.repositorioConta.remover(id);
+        this.repositorioConta.remover(id); 
     }
 
     public Conta buscarContaPorId(int id) throws NegocioException {
@@ -109,6 +112,15 @@ public class ControleFinanceiro implements Serializable {
     // Gerenciamento de Transações
     public void adicionarReceita(int contaId, double valor, String descricao, Categoria categoria) throws NegocioException {
         Conta conta = buscarContaPorId(contaId);
+        if(contaId == null){
+            throw new NegocioException("Conta com ID: "+contaId+" não encontrada.");
+        }
+        if(valor<0){
+            throw new NegocioException("O valor da receita deve ser positivo.");
+        }
+        if(categoria == null){
+            throw new NegocioException("Categoria não pode ser nula.");
+        }
         conta.creditar(valor);
         Receita receita = new Receita(valor, LocalDate.now(), descricao, conta, categoria);
         this.repositorioTransacao.adicionar(receita);
@@ -116,7 +128,19 @@ public class ControleFinanceiro implements Serializable {
 
     public void adicionarDespesa(int contaId, double valor, String descricao, int categoriaId) throws NegocioException, SaldoInsuficienteException {
         Conta conta = buscarContaPorId(contaId);
+        if(contaId == null){
+            throw new NegocioException("Conta com ID: "+contaId+" não encontrada.");
+        }
+        if(contaId.getSaldo() < valor){
+            throw new SaldoInsuficienteException("Saldo insuficiente para essa despesa.");
+        }
         Categoria categoria = buscarCategoriaPorId(categoriaId);
+        if(categoria == null){
+            throw new NegocioException("Categoria com ID: "+categoriaId+" não encontrada.");
+        }
+        if(valor < 0){
+            throw new NegocioException("O valor da despesa deve ser positivo.");
+        }
         conta.debitar(valor);
         Despesa despesa = new Despesa(valor, LocalDate.now(), descricao, conta, categoria);
         this.repositorioTransacao.adicionar(despesa);
