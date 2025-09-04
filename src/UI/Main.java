@@ -2,6 +2,8 @@ package UI;
 
 import java.util.List;
 import java.util.Scanner;
+import Negocios.exceptions.NegocioException;
+import Negocios.exceptions.SaldoInsuficienteException;
 
 import Fachada.FinanceiroFachada;
 import Negocios.*;
