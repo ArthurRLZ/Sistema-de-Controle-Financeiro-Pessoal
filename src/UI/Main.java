@@ -513,13 +513,57 @@ public class Main {
 
                                 switch (opcao) {
                                     case "1":
-                                        System.out.println("Salvando dados...");
-                                        // fachada.salvarDados();
+                                        // Menu para salvar
+                                        System.out.println("\nEscolha o formato para salvar:");
+                                        System.out.println("1. Serialização");
+                                        System.out.println("2. CSV");
+                                        System.out.print("Opção: ");
+                                        String formatoS = scanner.nextLine();
+                                        
+                                        if (formatoS.equals("1") || formatoS.equals("2")) {
+                                            System.out.print("Nome do arquivo (pressione Enter para usar o padrão): ");
+                                            String nomeArquivoSalvar = scanner.nextLine();
+                                            if (nomeArquivoSalvar.isEmpty()) {
+                                                nomeArquivoSalvar = "dados.dat";
+                                            }
+                                            
+                                            if (formatoS.equals("1")) {
+                                                fachada.salvarDados("serializacao", nomeArquivoSalvar);
+                                                System.out.println("Dados salvos em serialização.");
+                                            } else {
+                                                fachada.salvarDados("csv", nomeArquivoSalvar);
+                                                System.out.println("Dados salvos em CSV.");
+                                            }
+                                        } else {
+                                            System.out.println("Opção inválida.");
+                                        }
                                         break;
 
                                     case "2":
-                                        System.out.println("Carregando dados...");
-                                        // fachada.carregarDados();
+                                        // Menu para carregar
+                                        System.out.println("\nEscolha o formato para carregar:");
+                                        System.out.println("1. Serialização");
+                                        System.out.println("2. CSV");
+                                        System.out.print("Opção: ");
+                                        String formatoC = scanner.nextLine();
+                                        
+                                        if (formatoC.equals("1") || formatoC.equals("2")) {
+                                            System.out.print("Nome do arquivo (pressione Enter para usar o padrão): ");
+                                            String nomeArquivoCarregar = scanner.nextLine();
+                                            if (nomeArquivoCarregar.isEmpty()) {
+                                                nomeArquivoCarregar = "dados.dat";
+                                            }
+
+                                            if (formatoC.equals("1")) {
+                                                fachada.carregarDados("serializacao", nomeArquivoCarregar);
+                                                System.out.println("Dados carregados da serialização.");
+                                            } else {
+                                                fachada.carregarDados("csv", nomeArquivoCarregar);
+                                                System.out.println("Dados carregados do CSV.");
+                                            }
+                                        } else {
+                                            System.out.println("Opção inválida.");
+                                        }
                                         break;
 
                                     case "0":
