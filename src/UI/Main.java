@@ -6,11 +6,19 @@ import java.util.Scanner;
 import Fachada.FinanceiroFachada;
 import Negocios.Categoria;
 import Negocios.Conta;
+import Negocios.Transacao;
 
 public class Main {
     public static void main(String[] args){
         Scanner scanner = new Scanner(System.in);
         FinanceiroFachada fachada = new FinanceiroFachada();
+
+        int idTemp;
+        int idTempDois;
+        double valorTemp;
+        String descTemp;
+        Categoria  categoriaTemp;
+        Transacao transacaoTemp;
 
         while (true) {
             try {
@@ -51,33 +59,33 @@ public class Main {
 
                                     case "2":
                                         System.out.print("Digite o ID que deseja editar: ");
-                                        int idNomeConta = scanner.nextInt();
+                                        idTemp = scanner.nextInt();
                                         scanner.nextLine();
 
                                         System.out.print("Digite o novo nome para a conta: ");
                                         String novoNomeConta = scanner.nextLine();
 
-                                        fachada.editarNomeConta(idNomeConta, novoNomeConta);
+                                        fachada.editarNomeConta(idTemp, novoNomeConta);
 
                                         System.out.println("Conta editada com sucesso!");
                                         break;
 
                                     case "3":
                                         System.out.print("Digite o ID da conta à ser removida: ");
-                                        int idExcluirConta = scanner.nextInt();
+                                        idTemp = scanner.nextInt();
                                         scanner.nextLine();
 
-                                        fachada.removerConta(idExcluirConta);
+                                        fachada.removerConta(idTemp);
 
                                         System.out.println("Conta removida com sucesso!");
                                         break;
 
                                     case "4":
                                         System.out.print("Digite o ID da conta: ");
-                                        int idBuscaConta = scanner.nextInt();
+                                        idTemp = scanner.nextInt();
                                         scanner.nextLine();
 
-                                        Conta encontradoConta = fachada.buscarContaPorId(idBuscaConta);
+                                        Conta encontradoConta = fachada.buscarContaPorId(idTemp);
 
                                         if (encontradoConta != null) {
                                             System.out.println("Conta encontrada:");
@@ -144,37 +152,37 @@ public class Main {
 
                                     case "2":
                                         System.out.print("Digite o ID que deseja editar: ");
-                                        int idNomeCat = scanner.nextInt();
+                                        idTemp = scanner.nextInt();
                                         scanner.nextLine();
 
                                         System.out.print("Digite o novo nome para a categoria: ");
                                         String novoNomeCat = scanner.nextLine();
 
-                                        fachada.editarNomeCategoria(idNomeCat, novoNomeCat);
+                                        fachada.editarNomeCategoria(idTemp, novoNomeCat);
 
                                         System.out.println("Categoria editada com sucesso!");
                                         break;
 
                                     case "3":
                                         System.out.print("Digite o ID da categoria à ser removida: ");
-                                        int idExcluirCat = scanner.nextInt();
+                                        idTemp = scanner.nextInt();
                                         scanner.nextLine();
 
-                                        fachada.removerCategoria(idExcluirCat);
+                                        fachada.removerCategoria(idTemp);
 
                                         System.out.println("Categoria removida com sucesso!");
                                         break;
 
                                     case "4":
                                         System.out.print("Digite o ID da categoria: ");
-                                        int idBuscaCat = scanner.nextInt();
+                                        idTemp = scanner.nextInt();
                                         scanner.nextLine();
 
-                                        Categoria encontradoCat = fachada.buscarCategoriaPorId(idBuscaCat);
+                                        categoriaTemp = fachada.buscarCategoriaPorId(idTemp);
 
-                                        if (encontradoCat != null) {
+                                        if (categoriaTemp != null) {
                                             System.out.println("Categoria encontrada:");
-                                            System.out.println(encontradoCat);
+                                            System.out.println(categoriaTemp);
                                         }
 
                                         break;
@@ -225,10 +233,83 @@ public class Main {
 
                                 switch (opcaoTrans) {
                                     case "1":
+                                        System.out.print("Digite o id da conta: ");
+                                        idTemp = scanner.nextInt();
+                                        scanner.nextLine();
 
+                                        System.out.print("Digite o valor da receita: ");
+                                        valorTemp = scanner.nextDouble();
+                                        scanner.nextLine();
+
+                                        System.out.print("Digite a descrição da receita: ");
+                                        descTemp = scanner.nextLine();
+
+                                        System.out.print("Digite o id da categoria: ");
+                                        idTempDois = scanner.nextInt();
+                                        scanner.nextLine();
+                                        categoriaTemp = fachada.buscarCategoriaPorId(idTempDois);
+
+                                        fachada.adicionarReceita(idTemp, valorTemp, descTemp, categoriaTemp);
+
+                                        System.out.println("Receita adicionada com sucesso. ");
                                         break;
 
                                     case "2":
+                                        System.out.print("Digite o id da conta: ");
+                                        idTemp = scanner.nextInt();
+                                        scanner.nextLine();
+
+                                        System.out.print("Digite o valor da despesa: ");
+                                        valorTemp = scanner.nextDouble();
+                                        scanner.nextLine();
+
+                                        System.out.print("Digite a descrição da despesa: ");
+                                        descTemp = scanner.nextLine();
+
+                                        System.out.print("Digite o id da categoria: ");
+                                        idTempDois = scanner.nextInt();
+                                        scanner.nextLine();
+
+                                        fachada.adicionarDespesa(idTemp, valorTemp, descTemp, idTempDois);
+
+                                        System.out.println("Despesa adicionada com sucesso. ");
+
+                                        break;
+                                    case "3":
+                                        System.out.print("Digite o id da transação: ");
+                                        idTemp = scanner.nextInt();
+                                        scanner.nextLine();
+
+                                        fachada.removerTransacao(idTemp);
+
+                                        System.out.println("Transação excluída com sucesso. ");
+
+                                        break;
+
+                                    case "4":
+                                        System.out.print("Digite o id da transação: ");
+                                        idTemp = scanner.nextInt();
+                                        scanner.nextLine();
+
+                                        transacaoTemp = fachada.buscarTransacaoPorId(idTemp);
+
+                                        if (transacaoTemp != null) {
+                                            System.out.println("Transação encontrada:");
+                                            System.out.println(transacaoTemp);
+                                        }
+                                        break;
+
+                                    case "5":
+                                        System.out.print("Lista de Transações: ");
+                                        List<Transacao> listaTrans = fachada.listarTransacoes();
+
+                                        if (listaTrans.isEmpty()) {
+                                            System.out.println("Nenhuma transação cadastrada.");
+                                        } else {
+                                            for (Transacao t : listaTrans) {
+                                                System.out.println(t);
+                                            }
+                                        }
 
                                         break;
 
