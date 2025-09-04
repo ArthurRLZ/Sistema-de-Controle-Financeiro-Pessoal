@@ -19,6 +19,7 @@ public class Main {
         String descTemp;
         Categoria  categoriaTemp;
         Transacao transacaoTemp;
+        String opcao;
 
         while (true) {
             try {
@@ -31,7 +32,7 @@ public class Main {
                 System.out.println("6. Persistência");
                 System.out.println("0. Sair");
                 System.out.print("Opção: ");
-                String opcao = scanner.nextLine();
+                opcao = scanner.nextLine();
 
                 switch (opcao) {
                     case "1":
@@ -45,9 +46,9 @@ public class Main {
                                 System.out.println("5. Listar Contas");
                                 System.out.println("0. Voltar");
                                 System.out.print("Opção: ");
-                                String opcaoConta = scanner.nextLine();
+                                opcao = scanner.nextLine();
 
-                                switch (opcaoConta) {
+                                switch (opcao) {
                                     case "1":
                                         System.out.print("Digite o nome da nova conta: ");
                                         String nomeConta = scanner.nextLine();
@@ -117,7 +118,7 @@ public class Main {
                                         break;
                                 }
 
-                                if (opcaoConta.equals("0")) {
+                                if (opcao.equals("0")) {
                                     break; // sai do submenu de contas
                                 }
 
@@ -138,9 +139,9 @@ public class Main {
                                 System.out.println("5. Listar Categorias");
                                 System.out.println("0. Voltar");
                                 System.out.print("Opção: ");
-                                String opcaoCat = scanner.nextLine();
+                                opcao = scanner.nextLine();
 
-                                switch (opcaoCat) {
+                                switch (opcao) {
                                     case "1":
                                         System.out.print("Digite o nome da nova categoria: ");
                                         String nomeCat = scanner.nextLine();
@@ -210,7 +211,7 @@ public class Main {
                                         break;
                                 }
 
-                                if (opcaoCat.equals("0")) break;
+                                if (opcao.equals("0")) break;
 
                             } catch (Exception e) {
                                 System.out.println("Erro: " + e.getMessage());
@@ -229,9 +230,9 @@ public class Main {
                                 System.out.println("5. Listar Transações");
                                 System.out.println("0. Voltar");
                                 System.out.print("Opção: ");
-                                String opcaoTrans = scanner.nextLine();
+                                opcao = scanner.nextLine();
 
-                                switch (opcaoTrans) {
+                                switch (opcao) {
                                     case "1":
                                         System.out.print("Digite o id da conta: ");
                                         idTemp = scanner.nextInt();
@@ -322,7 +323,7 @@ public class Main {
                                         break;
                                 }
 
-                                if (opcaoTrans.equals("0")) break;
+                                if (opcao.equals("0")) break;
 
                             } catch (Exception e) {
                                 System.out.println("Erro: " + e.getMessage());
@@ -339,9 +340,9 @@ public class Main {
                                 System.out.println("2. Listar Despesas Recorrentes");
                                 System.out.println("0. Voltar");
                                 System.out.print("Opção: ");
-                                String opcaoDesp = scanner.nextLine();
+                                opcao = scanner.nextLine();
 
-                                switch (opcaoDesp) {
+                                switch (opcao) {
                                     case "1":
 
                                         break;
@@ -359,7 +360,7 @@ public class Main {
                                         break;
                                 }
 
-                                if (opcaoDesp.equals("0")) break;
+                                if (opcao.equals("0")) break;
 
                             } catch (Exception e) {
                                 System.out.println("Erro: " + e.getMessage());
@@ -379,9 +380,9 @@ public class Main {
                                 System.out.println("6. Exibir Relatório Anual");
                                 System.out.println("0. Voltar");
                                 System.out.print("Opção: ");
-                                String opcaoRel = scanner.nextLine();
+                                opcao = scanner.nextLine();
 
-                                switch (opcaoRel) {
+                                switch (opcao) {
                                     case "1":
 
                                         break;
@@ -399,7 +400,7 @@ public class Main {
                                         break;
                                 }
 
-                                if (opcaoRel.equals("0")) break;
+                                if (opcao.equals("0")) break;
 
                             } catch (Exception e) {
                                 System.out.println("Erro: " + e.getMessage());
@@ -415,9 +416,9 @@ public class Main {
                                 System.out.println("2. Carregar Dados");
                                 System.out.println("0. Voltar");
                                 System.out.print("Opção: ");
-                                String opcaoPers = scanner.nextLine();
+                                opcao = scanner.nextLine();
 
-                                switch (opcaoPers) {
+                                switch (opcao) {
                                     case "1":
                                         System.out.println("Salvando dados...");
                                         // fachada.salvarDados();
@@ -437,7 +438,7 @@ public class Main {
                                         break;
                                 }
 
-                                if (opcaoPers.equals("0")) break;
+                                if (opcao.equals("0")) break;
 
                             } catch (Exception e) {
                                 System.out.println("Erro: " + e.getMessage());
