@@ -477,11 +477,45 @@ public class Main {
 
                                 switch (opcao) {
                                     case "1":
-
+                                        System.out.println(fachada.gerarBalanco());
                                         break;
 
                                     case "2":
+                                        System.out.println(fachada.gerarBalanco());
+                                        break;
 
+                                    case "3":
+                                        System.out.print("Digite o ano: ");
+                                        int anoMensal = scanner.nextInt();
+                                        System.out.print("Digite o mês (1-12): ");
+                                        int mes = scanner.nextInt();
+                                        scanner.nextLine(); // consome ENTER
+                                        System.out.println(fachada.gerarRelatorioMensal(anoMensal, mes));
+                                        break;
+
+                                    case "4":
+                                        System.out.print("Digite o ano: ");
+                                        int anoTrim = scanner.nextInt();
+                                        System.out.print("Digite o trimestre (1-4): ");
+                                        int trimestre = scanner.nextInt();
+                                        scanner.nextLine();
+                                        System.out.println(fachada.gerarRelatorioTrimestral(anoTrim, trimestre));
+                                        break;
+
+                                    case "5":
+                                        System.out.print("Digite o ano: ");
+                                        int anoSem = scanner.nextInt();
+                                        System.out.print("Digite o semestre (1-2): ");
+                                        int semestre = scanner.nextInt();
+                                        scanner.nextLine();
+                                        System.out.println(fachada.gerarRelatorioSemestral(anoSem, semestre));
+                                        break;
+
+                                    case "6":
+                                        System.out.print("Digite o ano: ");
+                                        int anoAnual = scanner.nextInt();
+                                        scanner.nextLine();
+                                        System.out.println(fachada.exibirRelatorioAnual(anoAnual));
                                         break;
 
                                     case "0":
