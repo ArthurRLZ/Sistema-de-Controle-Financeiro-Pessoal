@@ -112,7 +112,7 @@ public class ControleFinanceiro implements Serializable {
     // Gerenciamento de Transações
     public void adicionarReceita(int contaId, double valor, String descricao, Categoria categoria) throws NegocioException {
         Conta conta = buscarContaPorId(contaId);
-        if(contaId == null){
+        if(conta == null){
             throw new NegocioException("Conta com ID: "+contaId+" não encontrada.");
         }
         if(valor<0){
@@ -128,10 +128,10 @@ public class ControleFinanceiro implements Serializable {
 
     public void adicionarDespesa(int contaId, double valor, String descricao, int categoriaId) throws NegocioException, SaldoInsuficienteException {
         Conta conta = buscarContaPorId(contaId);
-        if(contaId == null){
+        if(conta == null){
             throw new NegocioException("Conta com ID: "+contaId+" não encontrada.");
         }
-        if(contaId.getSaldo() < valor){
+        if(conta.getSaldo() < valor){
             throw new SaldoInsuficienteException("Saldo insuficiente para essa despesa.");
         }
         Categoria categoria = buscarCategoriaPorId(categoriaId);

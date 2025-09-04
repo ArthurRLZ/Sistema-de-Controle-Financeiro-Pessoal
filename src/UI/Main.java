@@ -62,7 +62,7 @@ public class Main {
                                         break;
 
                                     case "2":
-                                        try{ 
+                                        try{
                                         System.out.print("Digite o ID que deseja editar: ");
                                         idTemp = scanner.nextInt();
                                         scanner.nextLine();
@@ -94,7 +94,7 @@ public class Main {
                                             System.out.println("Erro: "+e.getMessage());
                                         }
                                         break;
-                                        
+
                                     case "4":
                                         System.out.print("Digite o ID da conta: ");
                                         idTemp = scanner.nextInt();
@@ -181,7 +181,7 @@ public class Main {
                                         }catch(NegocioException e){
                                             System.out.println("Erro: " +e.getMessage());
                                         }
-                                        break;                                       
+                                        break;
 
                                     case "3":
                                         System.out.print("Digite o ID da categoria à ser removida: ");
@@ -273,9 +273,9 @@ public class Main {
                                         fachada.adicionarReceita(idTemp, valorTemp, descTemp, categoriaTemp);
                                         System.out.println("Receita adicionada com sucesso. ");
                                         }catch(NegocioException e){
-                                            System.out.println("Erro: "+e,getMessage());
+                                            System.out.println("Erro: "+e.getMessage());
                                         }
-
+                                        break;
                                     case "2":
                                         System.out.print("Digite o id da conta: ");
                                         idTemp = scanner.nextInt();
@@ -579,14 +579,14 @@ public class Main {
                                         System.out.println("2. CSV");
                                         System.out.print("Opção: ");
                                         String formatoS = scanner.nextLine();
-                                        
+
                                         if (formatoS.equals("1") || formatoS.equals("2")) {
                                             System.out.print("Nome do arquivo (pressione Enter para usar o padrão): ");
                                             String nomeArquivoSalvar = scanner.nextLine();
                                             if (nomeArquivoSalvar.isEmpty()) {
                                                 nomeArquivoSalvar = "dados.dat";
                                             }
-                                            
+
                                             if (formatoS.equals("1")) {
                                                 fachada.salvarDados("serializacao", nomeArquivoSalvar);
                                                 System.out.println("Dados salvos em serialização.");
@@ -606,7 +606,7 @@ public class Main {
                                         System.out.println("2. CSV");
                                         System.out.print("Opção: ");
                                         String formatoC = scanner.nextLine();
-                                        
+
                                         if (formatoC.equals("1") || formatoC.equals("2")) {
                                             System.out.print("Nome do arquivo (pressione Enter para usar o padrão): ");
                                             String nomeArquivoCarregar = scanner.nextLine();
