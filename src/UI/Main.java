@@ -60,10 +60,15 @@ public class Main {
                                         break;
 
                                     case "2":
+                                        try{ 
                                         System.out.print("Digite o ID que deseja editar: ");
                                         idTemp = scanner.nextInt();
                                         scanner.nextLine();
-
+                                        }catch(InputMismatchException e){
+                                            System.out.println("Erro: digite um numero inteiro valido para o ID!");
+                                            scanner.nextLine();
+                                            break;
+                                        }
                                         System.out.print("Digite o novo nome para a conta: ");
                                         String novoNomeConta = scanner.nextLine();
 
@@ -73,15 +78,21 @@ public class Main {
                                         break;
 
                                     case "3":
+                                        try{
                                         System.out.print("Digite o ID da conta à ser removida: ");
                                         idTemp = scanner.nextInt();
                                         scanner.nextLine();
-
                                         fachada.removerConta(idTemp);
-
                                         System.out.println("Conta removida com sucesso!");
+                                        }catch(InputMismatchException e){
+                                            System.out.println("Erro: digite um numero inteiro valido para o ID!");
+                                            scanner.nextLine();
+                                            break;
+                                        }catch(NegocioException e){
+                                            System.out.println("Erro: "+e.getMessage());
+                                        }
                                         break;
-
+                                        
                                     case "4":
                                         System.out.print("Digite o ID da conta: ");
                                         idTemp = scanner.nextInt();
@@ -147,9 +158,12 @@ public class Main {
                                         System.out.print("Digite o nome da nova categoria: ");
                                         String nomeCat = scanner.nextLine();
 
+                                        try{
                                         fachada.criarCategoria(nomeCat);
-
                                         System.out.println("Categoria criada com sucesso!");
+                                        }catch(NegocioException e){
+                                            System.out.println("Erro: " +e.getMessage());
+                                        }
                                         break;
 
                                     case "2":
@@ -159,34 +173,37 @@ public class Main {
 
                                         System.out.print("Digite o novo nome para a categoria: ");
                                         String novoNomeCat = scanner.nextLine();
-
+                                        try{
                                         fachada.editarNomeCategoria(idTemp, novoNomeCat);
-
                                         System.out.println("Categoria editada com sucesso!");
-                                        break;
+                                        }catch(NegocioException e){
+                                            System.out.println("Erro: " +e.getMessage());
+                                        }
+                                        break;                                       
 
                                     case "3":
                                         System.out.print("Digite o ID da categoria à ser removida: ");
                                         idTemp = scanner.nextInt();
                                         scanner.nextLine();
-
+                                        try{
                                         fachada.removerCategoria(idTemp);
-
                                         System.out.println("Categoria removida com sucesso!");
+                                        }catch(NegocioException e){
+                                            System.out.println("Erro :"+e.getMessage());
+                                        }
                                         break;
 
                                     case "4":
                                         System.out.print("Digite o ID da categoria: ");
                                         idTemp = scanner.nextInt();
                                         scanner.nextLine();
-
+                                        try{
                                         categoriaTemp = fachada.buscarCategoriaPorId(idTemp);
-
-                                        if (categoriaTemp != null) {
-                                            System.out.println("Categoria encontrada:");
-                                            System.out.println(categoriaTemp);
+                                        System.out.println("Categoria encontrada:");
+                                        System.out.println(categoriaTemp);
+                                        }catch(NegocioException e){
+                                            System.out.println("Erro: "+e.getMessage());
                                         }
-
                                         break;
 
                                     case "5":
