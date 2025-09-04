@@ -4,9 +4,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import Fachada.FinanceiroFachada;
-import Negocios.Categoria;
-import Negocios.Conta;
-import Negocios.Transacao;
+import Negocios.*;
 
 public class Main {
     public static void main(String[] args){
@@ -16,10 +14,13 @@ public class Main {
         int idTemp;
         int idTempDois;
         double valorTemp;
+        int valorTempDois;
         String descTemp;
         Categoria  categoriaTemp;
         Transacao transacaoTemp;
         String opcao;
+        Periodicidade periodicidadeTemp;
+
 
         while (true) {
             try {
@@ -337,20 +338,112 @@ public class Main {
                                 System.out.println("\n==== Gerenciar Despesas Recorrentes ====");
                                 System.out.println("1. Adicionar Despesa Recorrente");
                                 System.out.println("2. Processar Despesa Recorrente");
-                                System.out.println("2. Listar Despesas Recorrentes");
+                                System.out.println("3. Listar Despesas Recorrentes");
+                                System.out.println("4. Remover Despesas Recorrentes");
+                                System.out.println("5. Buscar Despesas Recorrentes");
                                 System.out.println("0. Voltar");
                                 System.out.print("Opção: ");
                                 opcao = scanner.nextLine();
 
                                 switch (opcao) {
                                     case "1":
+                                        System.out.print("Digite o valor da despesa recorrente: ");
+                                        valorTemp = scanner.nextDouble();
+                                        scanner.nextLine();
 
+                                        System.out.print("Digite a descrição da despesa: ");
+                                        descTemp = scanner.nextLine();
+
+                                        System.out.print("Digite o id da conta: ");
+                                        idTemp = scanner.nextInt();
+                                        scanner.nextLine();
+
+                                        System.out.print("Digite o id da categoria: ");
+                                        idTempDois = scanner.nextInt();
+                                        scanner.nextLine();
+
+                                        System.out.println("Escolha a periodicidade:");
+                                        System.out.println("1 - Diária");
+                                        System.out.println("2 - Semanal");
+                                        System.out.println("3 - Mensal");
+                                        System.out.println("4 - Anual");
+                                        System.out.print("Opção: ");
+
+                                        int escolha = scanner.nextInt();
+                                        scanner.nextLine(); // consome ENTER
+
+
+
+                                        switch (escolha) {
+                                            case 1:
+                                                periodicidadeTemp = Periodicidade.DIARIA;
+                                                break;
+                                            case 2:
+                                                periodicidadeTemp = Periodicidade.SEMANAL;
+                                                break;
+                                            case 3:
+                                                periodicidadeTemp = Periodicidade.MENSAL;
+                                                break;
+                                            case 4:
+                                                periodicidadeTemp = Periodicidade.ANUAL;
+                                                break;
+                                            default:
+                                                System.out.println("Opção inválida, assumindo MENSAL como padrão.");
+                                                periodicidadeTemp = Periodicidade.MENSAL;
+                                                break;
+                                        }
+
+                                        System.out.print("Digite o número de parcelas: ");
+                                        valorTempDois = scanner.nextInt();
+                                        scanner.nextLine();
+
+                                        fachada.adicionarDespesaRecorrente(valorTemp, descTemp, idTemp, idTempDois, periodicidadeTemp, valorTempDois);
+
+                                        System.out.println("Despesa recorrente adicionada com sucesso. ");
                                         break;
 
                                     case "2":
+                                        System.out.println("Processando despesas recorrentes");
+
+                                        fachada.processarDespesasRecorrentes();
+                                        break;
+
+                                    case "3":
+                                        System.out.print("Lista de despesas recorrentes: ");
+                                        List<DespesaRecorrente> listaDespRec = fachada.listarDespesasRecorrentes();
+
+                                        if (listaDespRec.isEmpty()) {
+                                            System.out.println("Nenhuma transação cadastrada.");
+                                        } else {
+                                            for (DespesaRecorrente dr : listaDespRec) {
+                                                System.out.println(dr);
+                                            }
+                                        }
 
                                         break;
 
+                                    case "4":
+                                        System.out.print("Digite o id da despesa recorrente: ");
+                                        idTemp = scanner.nextInt();
+                                        scanner.nextLine();
+
+                                        fachada.removerDespesaRecorrente(idTemp);
+
+                                        System.out.println("Despesa excluída com sucesso. ");
+                                        break;
+
+                                    case "5":
+                                        System.out.print("Digite o id da despesa recorrenye: ");
+                                        idTemp = scanner.nextInt();
+                                        scanner.nextLine();
+
+                                        DespesaRecorrente despesaRecorrenteTemp = fachada.buscarDespesaRecorrentePorId(idTemp);
+
+                                        if (despesaRecorrenteTemp != null) {
+                                            System.out.println("despesa encontrada:");
+                                            System.out.println(despesaRecorrenteTemp);
+                                        }
+                                        break;
                                     case "0":
                                         System.out.println("Voltando ao menu principal...");
                                         break;
