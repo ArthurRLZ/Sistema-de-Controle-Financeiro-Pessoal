@@ -53,8 +53,6 @@ Para rodar este projeto, certifique-se de ter o Java 17 ou superior e o Maven in
 
 Clone o repositório:
 
-Bash
-
 git clone (https://github.com/ArthurRLZ/Sistema-de-Controle-Financeiro-Pessoal.git)
 
 Abra o projeto em sua IDE (IntelliJ, Eclipse, VS Code).
