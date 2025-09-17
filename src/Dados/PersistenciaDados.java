@@ -1,24 +1,32 @@
 package Dados;
 
-import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVFormat;	
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 
-import java.io.*;	
+import java.io.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import Negocios.Categoria;
+import Negocios.Conta;
 import Negocios.ControleFinanceiro;
+import Negocios.Despesa;
+import Negocios.DespesaRecorrente;
+import Negocios.Periodicidade;
+import Negocios.Receita;
+import Negocios.Transacao;
 
 public class PersistenciaDados {
-	// ======================= SERIALIZACAO =====================================
+	// SERIALIZACAO 
 	
 	// Salva ControleFinanceiro completo usando serialização
     public static void salvarDadosSerializacao(ControleFinanceiro controle, String nomeArquivo) {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(nomeArquivo))) {
             oos.writeObject(controle);
-            System.out.println("Dados salvos por serialização em: " + nomeArquivo);
+            System.out.println("Dados salvos");
         } catch (IOException e) {
             System.err.println("Erro ao salvar dados por serialização: " + e.getMessage());
         }
@@ -38,7 +46,7 @@ public class PersistenciaDados {
         }
     }
     
-// =================================== CSV ============================================
+//  CSV 
     // Salvar
     public static void salvarDadosCSV(ControleFinanceiro controle, String nomeBaseArquivo) throws IOException { //Funcao principal para salvar
         salvarContasCSV(controle.listarContas(), nomeBaseArquivo + "_contas.csv");
@@ -99,7 +107,7 @@ public class PersistenciaDados {
   // Carregar
     public static ControleFinanceiro carregarDadosCSV(String nomeBaseArquivo) throws IOException {
         List<Conta> contas = carregarContasCSV(nomeBaseArquivo + "_contas.csv");
-        List<Categoria> categorias = carregarCategoriasCSV(nomeBaseArquivo + "_categorias.csv");
+        List<Categoria> categorias = carregarCategoriaCSV(nomeBaseArquivo + "_categorias.csv");
         List<Transacao> transacoes = carregarTransacoesCSV(nomeBaseArquivo + "_transacoes.csv", contas, categorias);
         List<DespesaRecorrente> despesasRecorrentes = carregarDespesasRecorrentesCSV(nomeBaseArquivo + "_despesas_recorrentes.csv", contas, categorias);
 
@@ -178,7 +186,7 @@ public class PersistenciaDados {
                     double saldo = Double.parseDouble(record.get("saldo"));
                     contas.add(new Conta(id, nome, saldo));
                 } catch (NumberFormatException e) {
-                    System.err.println("Erro ao carregar conta de CSV: dado numérico inválido. ");
+                   
                 }
             }
         }
@@ -195,9 +203,9 @@ public class PersistenciaDados {
     			try {
     				int id = Integer.parseInt(record.get("id"));
     				String nome = record.get("nome");
-    				categorias.add(new Categoria(id,nome));
+    				categorias.add(new Categoria(nome,id));
     			} catch (NumberFormatException e) {
-                    System.err.println("Erro ao carregar categoria de CSV: dado numérico inválido. ");
+                  
                 }
             }
         }

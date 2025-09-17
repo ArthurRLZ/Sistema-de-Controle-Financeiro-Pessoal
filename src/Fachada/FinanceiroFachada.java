@@ -14,7 +14,7 @@ public class FinanceiroFachada {
 
     public FinanceiroFachada() {
         // Tenta carregar o sistema a partir de um arquivo
-        this.controlador = PersistenciaDados.carregarDadosSerializacao("dados.dat");
+    	  this.controlador = PersistenciaDados.carregarDadosSerializacao("dados.dat");
         // Se o arquivo não existir (ou houver um erro), cria um novo controlador
         // com repositórios vazios
         if (this.controlador == null) {
