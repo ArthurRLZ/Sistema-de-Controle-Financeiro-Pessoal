@@ -56,6 +56,7 @@ Clone o repositório:
 Bash
 
 git clone (https://github.com/ArthurRLZ/Sistema-de-Controle-Financeiro-Pessoal.git)
+
 Abra o projeto em sua IDE (IntelliJ, Eclipse, VS Code).
 
 O Maven deve baixar automaticamente as dependências listadas no pom.xml. Se não, clique com o botão direito no projeto e selecione Maven > Update Project....
