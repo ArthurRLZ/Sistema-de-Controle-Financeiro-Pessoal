@@ -7,7 +7,7 @@ O projeto foi desenvolvido para cumprir os seguintes requisitos da disciplina:
 
 * **Persistência de Dados**: O sistema suporta persistência em arquivo, utilizando serialização de objetos e arquivos CSV (com o auxílio de uma biblioteca de terceiros).
 
-* ** Ocultação da Informação**: Todos os atributos das classes são privados, com acesso controlado através de métodos Getters e Setters.
+* **Ocultação da Informação**: Todos os atributos das classes são privados, com acesso controlado através de métodos Getters e Setters.
 
 * **Padrão de Projeto**: A arquitetura do projeto é dividida em camadas, utilizando o padrão Fachada para simplificar a interface de usuário.
 
@@ -34,19 +34,19 @@ O projeto é organizado em camadas para garantir a separação de responsabilida
 * **Dados**: A camada de dados, que contém as classes de repositório e a lógica de persistência (PersistenciaDados).
 
 ## Funcionalidades Principais
-* **Gerenciamento de Contas: Adicionar, editar, remover e listar contas (Conta).
+* **Gerenciamento de Contas**: Adicionar, editar, remover e listar contas (Conta).
 
-* **Gerenciamento de Categorias: Adicionar, editar, remover e listar categorias (Categoria).
+* **Gerenciamento de Categorias**: Adicionar, editar, remover e listar categorias (Categoria).
 
-* **Gerenciamento de Transações: Adicionar receitas (Receita) e despesas (Despesa), remover transações, e listar o histórico.
+* **Gerenciamento de Transações**: Adicionar receitas (Receita) e despesas (Despesa), remover transações, e listar o histórico.
 
-* **Despesas Recorrentes: Adicionar e processar despesas recorrentes (DespesaRecorrente).
+* **Despesas Recorrentes**: Adicionar e processar despesas recorrentes (DespesaRecorrente).
 
-* **Transferências: Realizar transferências de valores entre contas.
+* **Transferências**: Realizar transferências de valores entre contas.
 
-* **Relatórios: Gerar relatórios de balanço, gastos por categoria e relatórios por período (mensal, trimestral, semestral e anual).
+* **Relatórios**: Gerar relatórios de balanço, gastos por categoria e relatórios por período (mensal, trimestral, semestral e anual).
 
-* **Persistência: Salvar e carregar o estado completo do sistema usando serialização de objetos ou arquivos CSV.
+* **Persistência**: Salvar e carregar o estado completo do sistema usando serialização de objetos ou arquivos CSV.
 
 ## Instalação e Execução
 Siga os passos abaixo para configurar e executar o jogo no seu computador.
@@ -56,10 +56,10 @@ Siga os passos abaixo para configurar e executar o jogo no seu computador.
     ```bash
     git clone https://github.com/ArthurRLZ/Sistema-de-Controle-Financeiro-Pessoal.git
 
-2. **Abra o projeto em sua IDE (IntelliJ, Eclipse, VS Code).
+2. **Abra o projeto em sua IDE (IntelliJ, Eclipse, VS Code)**.
 O Maven deve baixar automaticamente as dependências listadas no pom.xml. Se não, clique com o botão direito no projeto e selecione Maven > Update Project....
 
-3. **Execute a classe Main.java no pacote UI para iniciar a interface de linha de comando.
+3. **Execute a classe Main.java no pacote UI para iniciar a interface de linha de comando.**
 
 ## Autores
 * **Joaci Laurindo** - [@joacif](https://github.com/joacif)
